@@ -1,0 +1,10 @@
+{
+    "messages": [
+        {
+            "text": "What's your favorite meat (or meat-alternative)?",
+            "enabled": true
+        }
+    ],
+    "interval": 1200,
+    "enabled": false
+}

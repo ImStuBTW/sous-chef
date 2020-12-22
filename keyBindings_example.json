@@ -1,0 +1,48 @@
+[
+    {
+	    "key": "F1",
+	    "scene": "Starting Soon"
+    },
+    {
+        "key": "F2",
+        "scene": "Be Right Back"
+    },
+    {
+	    "key": "F3",
+	    "scene": "Full Kitchen",
+	    "tag": "kitchen"
+    },
+    {
+	    "key": "F4",
+	    "scene": "Cutting Board",
+	    "tag": "board"
+    },
+    {
+	    "key": "F5",
+	    "scene": "Stove",
+	    "tag": "stove"
+    },
+    {
+        "key": "F6",
+        "command": "ToggleMute",
+        "params": {"source": "Mic"}
+    },
+    {
+        "key": "F7",
+        "emit": "confetti-toggle"
+    },
+    {
+	    "key": "F8",
+	    "scene": "Thanks for Watching",
+        "tag": "end"
+    },
+    {
+        "key": "F9",
+        "command": "StopStreaming"
+    },
+    {
+        "key": "F10",
+        "scene": "Pupper",
+	    "tag": "doggo"
+    }
+]
