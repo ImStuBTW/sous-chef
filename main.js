@@ -13,8 +13,8 @@ const frontendServer = require('http').createServer(frontendApp);
 const backendServer = require('http').createServer(backendApp);
 
 // Set the application's port.
-// TODO: Set frontendPort to 80
-const frontendPort = '3000';
+let frontendPort = '3000';
+if(!isDev) { frontendPort = 80; }
 const backendPort = '3001';
 
 // Initialize Socket.io Instances
