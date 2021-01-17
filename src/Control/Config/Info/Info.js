@@ -1,7 +1,6 @@
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
-import Button from 'react-bootstrap/Button';
 import ListGroup from 'react-bootstrap/ListGroup';
 
 import './info.scss';

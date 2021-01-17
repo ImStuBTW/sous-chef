@@ -9,7 +9,6 @@ const path = require("path");
 const express = require('express');
 const frontendApp = express();
 const backendApp = express();
-const frontendServer = require('http').createServer(frontendApp);
 const backendServer = require('http').createServer(backendApp);
 
 // Set the application's port.
@@ -23,7 +22,7 @@ const backendPort = '3001';
 // clientio and clientSocket instances used to send messages from the sever, to the server.
 // This aids in inter-app communication, but is not needed for most plugins.
 require('events').EventEmitter.defaultMaxListeners = 24;
-const io = require('socket.io')(backendServer);
+const io = require('socket.io')(backendServer, {cors: {origin: '*'} });
 let clientio = require('socket.io-client');
 let clientSocket = clientio('http://localhost:' + backendPort);
 
