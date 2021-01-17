@@ -1,0 +1,92 @@
+@import '../../main.scss';
+
+.probe-panel {
+    margin-top: 15px;
+}
+
+.probe-header-button {
+    margin-left: 10px;
+    padding: 2px;
+}
+
+.probe-header-button-image {
+    height: 25px;
+    margin: auto;
+}
+
+.probe-colon {
+    font-weight: bold;
+    font-size: 1.4rem;
+    color: $secondary;
+}
+
+.probe-form-group {
+    margin-bottom: 0px !important;
+}
+
+.probe-button {
+    margin-top: 15px;
+}
+
+.probe-port-list {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+.probe-port-button {
+    margin-right: 10px;
+}
+
+.probe-port-button:last-child {
+    margin-right: 0px;
+}
+
+.probe-alarm {
+    margin-top: 15px;
+}
+
+.probe-alarm-button {
+    height: 38px;
+}
+
+.probe-alarm-icon {
+    margin-right: 0px;
+}
+
+.probe-alarm-icon-image {
+    height: 20px;
+    margin-bottom: 4px;
+}
+
+.probe-alarm-text {
+    display: none;
+}
+
+.probe-target-input {
+    margin-top: 15px;
+}
+
+@include media-breakpoint-down(xs) {
+    .probe-alarm-icon {
+        margin-right: 8px;
+    }
+    
+    .probe-alarm-text {
+        display: inline;
+    }
+}
+
+.probe-readings {
+    margin-top: 15px;
+}
+
+.probe-reading-alert {
+    text-align: center;
+    padding: 0.75rem;
+    margin-bottom: 0px;
+}
+
+.probe-controls {
+    margin-top: 15px;
+}

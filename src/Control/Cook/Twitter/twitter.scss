@@ -1,0 +1,29 @@
+@import '../../main.scss';
+
+.tweet-panel {
+    margin-top: 15px;
+}
+
+.tweet-form-group {
+    margin-top: 0px;
+}
+
+.tweet-form-buttons {
+    margin-top: 15px;
+}
+
+.tweet-preview {
+    width: 100%;
+    margin-bottom: 30px;
+
+    zoom: 0.5;
+    -moz-transform: scale(0.5);
+}
+
+.tweet {
+    width: 100%;
+    max-width: 100% !important;
+    min-width: 0px !important;
+    border: solid 1px $gray-400;
+    border-radius: 4px;
+}
