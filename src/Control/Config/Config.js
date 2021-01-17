@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 
 import Twitch from './Twitch/Twitch';
 import OBS from './OBS/OBS';
+import Info from './Info/Info';
 
 function Config() {
   return (
@@ -16,6 +17,11 @@ function Config() {
       <Row>
         <Col>
           <OBS />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Info />
         </Col>
       </Row>
     </Container>

@@ -51,7 +51,7 @@ function Reminders(props) {
                                     <Form.Row>
                                         <Col xs={10} className="reminder-text">What's your favorite Tex-Mex food?</Col>
                                         <Col xs={2}>
-                                            <Button className="reminder-remove-button" variant="outline-danger" block>
+                                            <Button className="reminder-remove-button" variant="outline-primary" block>
                                                 <img className="reminder-remove-icon" src={minusIcon} alt="Remove Message" />
                                             </Button>
                                         </Col>
