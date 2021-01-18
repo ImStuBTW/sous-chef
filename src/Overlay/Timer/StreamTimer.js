@@ -1,7 +1,7 @@
 let EasyTimer = require('easytimer.js');
 
 // Class to encapsulate common timer functions.
-module.exports = class StreamTimer {
+class StreamTimer {
 
     // Create and start timer when this object is created.
     constructor(id, name, seconds, updateCallback, expiredCallback) {
@@ -58,3 +58,5 @@ module.exports = class StreamTimer {
     }
 
 }
+
+export default StreamTimer;

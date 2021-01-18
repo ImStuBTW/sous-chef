@@ -24,6 +24,7 @@
     "itunes-bridge": "^0.6.4",
     "jquery": "^3.5.1",
     "obs-websocket-js": "^4.0.2",
+    "open": "^7.3.1",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.0",
     "react-chartjs-2": "^2.11.1",

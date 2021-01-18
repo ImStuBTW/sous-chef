@@ -1,7 +1,7 @@
 // Require Electron for app window.
 // isDev toggles some dev mode checks.
 // path is a helper function for relative file locations.
-const { app, BrowserWindow, globalShortcut } = require("electron");
+const { app, BrowserWindow, globalShortcut, shell } = require("electron");
 const isDev = require("electron-is-dev");
 const path = require("path");
 
@@ -92,6 +92,12 @@ function createWindow() {
         mainWindow.webContents.openDevTools({ mode: "detach" });
     });
   }
+
+  // Create handler for opening links in external browser.
+  mainWindow.webContents.on('new-window', function(e, url) {
+    e.preventDefault();
+    shell.openExternal(url);
+  });
 };
 
 // Create the main window when the app's ready.

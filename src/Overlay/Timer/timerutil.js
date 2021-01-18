@@ -1,4 +1,4 @@
-module.exports = class TimerUtil {
+class TimerUtil {
     // Extract just core timer details.
     static extractTimerInfo(streamTimer) {
         return {
@@ -16,3 +16,5 @@ module.exports = class TimerUtil {
         });
     }
 }
+
+export default TimerUtil;
