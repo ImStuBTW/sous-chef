@@ -2,11 +2,9 @@ import React, { useEffect } from 'react';
 import { useAnimate }  from 'react-simple-animate'; // Used for animations.
 import Spritesheet from 'react-responsive-spritesheet'; // Used to cycle through spritesheet frames.
 
-function ConfettiSprite({item, deleteCallback}) {
-    // Webpack requires a few hurdles to use images in import statements.
-    // Easier just to specify the path as a const.
-    const ConfettiSpriteSheet = '../../Images/PrideConfetti.png';
+import ConfettiSpriteSheet from '../../Images/PrideConfetti.png';
 
+function ConfettiSprite({item, deleteCallback}) {
     // Set up a wrapper for the confetti sprite giving it dimensions & position.
     const wrapperStyle = {
         position: "absolute",

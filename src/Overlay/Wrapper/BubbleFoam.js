@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useAnimate }  from 'react-simple-animate'; // Used to animate rise and fall of foam.
 
+import BubbleFoamSprite from '../../Images/BubbleFoam.png';
+
 function BubbleFoam({haltBubbles, foamOver, deleteCallback}) {
-    const BubbleFoamSprite = '../../Images/BubbleFoam.png'; // Pixelated beer foam.
-    
     // Absolutely positioned container to hold both foam image and yellow beer background div.
     // 7vh tall, placed 93 vh down the page. Full width.
     // Transformation starts it at 100vh off the page. Rises up in a second and a half.

@@ -80,7 +80,7 @@ class TimerControlContainer extends React.Component {
         // Child timers don't need the full StreamTimer object, so
         // we extract pertinent info before setting state.
         this.state = {
-            timers: this.streamTimers.map(TimerUtil.extractTimerInfo)
+            timers: this.streamTimers.map((timer) => {return TimerUtil.extractTimerInfo(timer)})
         };
     }
 

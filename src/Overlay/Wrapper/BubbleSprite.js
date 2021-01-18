@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useAnimate }  from 'react-simple-animate';
 
-function BubbleSprite({item, deleteCallback}) {
-    const Bubble0 = '../../Images/Bubble0.png';
-    const Bubble1 = '../../Images/Bubble1.png';
-    const Bubble2 = '../../Images/Bubble2.png';
-    const Bubble3 = '../../Images/Bubble3.png';
-    const Bubble4 = '../../Images/Bubble4.png';
-    const Bubble5 = '../../Images/Bubble5.png';
+import Bubble0 from '../../Images/Bubble0.png';
+import Bubble1 from '../../Images/Bubble1.png';
+import Bubble2 from '../../Images/Bubble2.png';
+import Bubble3 from '../../Images/Bubble3.png';
+import Bubble4 from '../../Images/Bubble4.png';
+import Bubble5 from '../../Images/Bubble5.png';
 
+function BubbleSprite({item, deleteCallback}) {
     // Set up a wrapper for the bubble sprite giving it dimensions & position.
     const wrapperStyle = {
         position: "absolute",
