@@ -26,9 +26,6 @@ const io = require('socket.io')(backendServer, {cors: {origin: '*'} });
 let clientio = require('socket.io-client');
 let clientSocket = clientio('http://localhost:' + backendPort);
 
-// Timer utility.
-const TimerUtil = require('./utils/timerutil');
-
 // Require plugins, passing the socket io connection.
 require('./plugins/banner.js')(io); // Show info banners.
 require('./plugins/botmessages.js')(io); // Handle Twitch bot messages.
@@ -78,7 +75,9 @@ function createWindow() {
     width: 1000,
     height: 800,
     webPreferences: {
-      nodeIntegration: false
+      nodeIntegration: false,
+      contextIsolation: true,
+      allowFileAccess: true
     }
   });
 
@@ -86,9 +85,12 @@ function createWindow() {
   // otherwise, load from Express app.
   mainWindow.loadURL("http://localhost:" + frontendPort);
 
-  // Pop the Chrome dev tools out if in dev mode.
+  // If in dev mode, ait until the web contents have loaded before opening dev tools.
   if (isDev) {
-    mainWindow.webContents.openDevTools({ mode: "detach" });
+    mainWindow.webContents.once('did-frame-finish-load', () => {
+      // Automatically pop out the dev tools.
+        mainWindow.webContents.openDevTools({ mode: "detach" });
+    });
   }
 };
 
