@@ -8,10 +8,12 @@ module.exports = function(io, clientSocket) {
     // Do nothing if bubbles is stopping.
     clientSocket.on('bubbles-toggle', () => {
         if(bubbles.state === 'start') {
+            console.log('bubbles.js bubbles-toggle: Stopping');
             bubbles.state = 'stopping';
             io.emit('bubbles-state', bubbles);
         }
-        else if(confetti.state === 'stop') {
+        else if(bubbles.state === 'stop') {
+            console.log('bubbles.js bubbles-toggle: Starting');
             bubbles.state = 'start';
             io.emit('bubbles-state', bubbles);
         }
@@ -20,14 +22,29 @@ module.exports = function(io, clientSocket) {
     io.on('connection', (socket) => {
         // FETCH BUBBLES
         socket.on('bubbles-fetch', (fn) => {
-            console.log(`Sending current image info: ${imageInfo.url}, hidden? ${imageInfo.hidden}`);
-            fn(imageInfo);
+            console.log(`bubbles.js bubbles-fetch Sending current bubbles state: ${bubbles.state}`);
+            fn(bubbles);
         });
 
         // UPDATE BUBBLES
-        socket.on('bubbles-update', function(msg) {
-            console.log(`Bubbles state: ${msg.state}`);
+        socket.on('bubbles-update', (msg) => {
+            console.log(`bubbles.js bubbles-update Bubbles state: ${msg.state}`);
+            bubbles = msg;
             io.emit('bubbles-state', msg);
         });
+
+        // TOGGLE BUBBLES
+        socket.on('bubbles-toggle', () => {
+            if(bubbles.state === 'start') {
+                console.log('bubbles.js bubbles-toggle: Stopping');
+                bubbles.state = 'stopping';
+                io.emit('bubbles-state', bubbles);
+            }
+            else if(bubbles.state === 'stop') {
+                console.log('bubbles.js bubbles-toggle: Starting');
+                bubbles.state = 'start';
+                io.emit('bubbles-state', bubbles);
+            }
+        })
     });
 };

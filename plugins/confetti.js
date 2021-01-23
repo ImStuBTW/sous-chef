@@ -8,27 +8,43 @@ module.exports = function(io, clientSocket) {
     // Stop confetti if confetti is running.
     clientSocket.on('confetti-toggle', () => {
         if(confetti.state === 'start') {
+            console.log('confetti.js confetti-toggle: Stopping');
             confetti.state = 'stopping';
             io.emit('confetti-state', confetti);
         }
         else if(confetti.state === 'stop') {
+            console.log('confetti.js confetti-toggle: Starting');
             confetti.state = 'start';
             io.emit('confetti-state', confetti);
         }
-    })
+    });
 
     io.on('connection', (socket) => {
         // FETCH CONFETTI
         socket.on('confetti-fetch', (fn) => {
-            console.log(`Sending current confetti state: ${confetti.state}`);
+            console.log(`confetti.js confetti-fetch Sending current confetti state: ${confetti.state}`);
             fn(confetti);
         });
 
         // UPDATE CONFETTI
-        socket.on('confetti-update', function(msg) {
-            console.log(`Confetti state: ${msg.state}`);
+        socket.on('confetti-update', (msg) => {
+            console.log(`confetti.js confetti-update Confetti state: ${msg.state}`);
             confetti = msg;
             io.emit('confetti-state', msg);
+        });
+
+        // TOGGLE CONFETTI
+        socket.on('confetti-toggle', (msg) => {
+            if(confetti.state === 'start') {
+                console.log('confetti.js confetti-toggle: Stopping');
+                confetti.state = 'stopping';
+                io.emit('confetti-state', confetti);
+            }
+            else if(confetti.state === 'stop') {
+                console.log('confetti.js confetti-toggle: Starting');
+                confetti.state = 'start';
+                io.emit('confetti-state', confetti);
+            }
         });
     });
 };

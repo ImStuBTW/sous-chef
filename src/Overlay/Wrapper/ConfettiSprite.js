@@ -23,6 +23,7 @@ function ConfettiSprite({item, deleteCallback}) {
         start: {transform: 'translateX('+item.x+'vw) translateY('+item.y+'vh)'},
         end: {transform: 'translateX('+item.newX+'vw) translateY('+item.newY+'vh)'},
         easeType: "cubic-bezier(0.445, 0.05, 0.55, 0.95)",
+        complete: {display: 'none'},
         onComplete: () => {deleteCallback(item.key)}
     });
 
@@ -31,7 +32,7 @@ function ConfettiSprite({item, deleteCallback}) {
     useEffect(() => {
         setTimeout(() => {
             play(true)
-        },250);
+        }, 500);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 

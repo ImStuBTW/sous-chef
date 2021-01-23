@@ -478,7 +478,7 @@ class Overlay extends React.Component {
 
   render() {
     return (
-      <>
+      <div id="overlay-body">
           <div id="left"></div>
           <div id="right"></div>
           <div id="top"></div>
@@ -502,7 +502,7 @@ class Overlay extends React.Component {
           <div id="confetti"></div>
           <div id="bubbles"></div>
           <div id="banner"></div>
-      </>
+      </div>
     )
   };
 }

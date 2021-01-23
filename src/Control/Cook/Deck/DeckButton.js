@@ -1,25 +1,37 @@
+// Import React packages.
+import { Component } from 'react';
+
+// Include React-Bootstrap components
 import Button from 'react-bootstrap/Button';
 
+// Include component stylings
 import './deckButton.scss';
 
-function DeckButton(props) {
-  return (
-    <div className="deck-button-container">
-      <div className="deck-button-wrapper">
-        <Button
-        className="deck-button"
-        variant="primary"
-        block
-        style={{
-          backgroundImage: `url(${props.icon})`,
-          backgroundSize: '80% 80%',
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'center'
-        }}
-        />
+class DeckButton extends Component {
+  handleClick = () => {
+    this.props.socket.emit(this.props.command, this.props.argument);
+  };
+
+  render() {
+    return (
+      <div className="deck-button-container">
+        <div className="deck-button-wrapper">
+          <Button
+          className="deck-button"
+          variant="primary"
+          block
+          style={{
+            backgroundImage: `url(${this.props.icon})`,
+            backgroundSize: '80% 80%',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center'
+          }}
+          onClick={this.handleClick}
+          />
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default DeckButton;

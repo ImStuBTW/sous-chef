@@ -79,7 +79,7 @@ function Bubbles({haltBubbles, bubblesOver, burstAmount, showFoam}) {
     // Optionally logs changes to the bubble state to the log every time it changes.
     //  Updates bubblesRef any time bubbles is updated.
     useEffect(() => {
-        console.log(bubbles);
+        //console.log(bubbles);
         bubblesRef.current = bubbles;
     }, [bubbles])
 

@@ -7,8 +7,25 @@ class ConfettiWrapper extends React.Component {
     constructor(props) {
         super(props);
 
-        props.socket.on('confetti-state', (msg) => this.handleConfettiStateChange(msg.state));
-        //props.socket.on('twitch-raid', (msg) => this.handleConfettiStateChange('start'));
+        props.socket.on('confetti-state', (msg) => {
+            if (msg.state !== 'stop') {
+                let confetti = (<Confetti 
+                    haltConfetti={msg.state === 'stopping'}
+                    confettiOver={() => {
+                        console.log("Confetti Over");
+                        props.socket.emit('confetti-update', {state: 'stop'});
+                        this.setState((state) => {
+                            return {
+                                confettiFixed: null
+                            };
+                        });
+                    }} 
+                />);
+                this.setState({
+                    confettiFixed: confetti
+                });
+            }
+        });
 
         props.socket.on('confetti-single', (msg) => {
             let id = uuidv1(),
@@ -23,7 +40,7 @@ class ConfettiWrapper extends React.Component {
                             };
                         });
                     }}
-                    burstAmount={amt} 
+                    burstAmount={amt}
                 />);
             this.setState({
                 confettiBursts: [...this.state.confettiBursts, {id: id, item: confetti}]
@@ -34,25 +51,6 @@ class ConfettiWrapper extends React.Component {
             confettiBursts: [],
             confettiFixed: null
         };
-    }
-
-    handleConfettiStateChange(state) {
-        if (state !== 'stop') {
-            let confetti = (<Confetti 
-                haltConfetti={state === 'stopping'}
-                confettiOver={() => {
-                    this.props.socket.emit('confetti-update', {state: 'stop'});
-                    this.setState((state) => {
-                        return {
-                            confettiFixed: null
-                        };
-                    });
-                }} 
-            />);
-            this.setState({
-                confettiFixed: confetti
-            });
-        }
     }
 
     render() {

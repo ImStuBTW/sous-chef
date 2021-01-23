@@ -31,7 +31,7 @@ function Confetti({haltConfetti, confettiOver, burstAmount}) {
     // speed is how fast it falls down in seconds. needs to be at least 5, can be up to 8.
     const createConfetti = () => {
         let xCord = (Math.random()*100);
-        setConfetti([...confetti,   {
+        setConfetti([...confettiRef.current,   {
             key: uuidv1(),
             color: nextColor,
             x: xCord,
@@ -56,7 +56,7 @@ function Confetti({haltConfetti, confettiOver, burstAmount}) {
                 key: uuidv1(),
                 color: tempNextColor,
                 x: xCord,
-                y: -10,
+                y: (Math.random()*-5)-5,
                 newX: xCord+(Math.random()*15)-(Math.random()*15),
                 newY: 110,
                 speed: (Math.random()*3)+5
@@ -71,7 +71,7 @@ function Confetti({haltConfetti, confettiOver, burstAmount}) {
 
     // Makes N confetti when the confetti wrapper is loaded.
     useEffect(() => {
-        createBulkConfetti(burstAmount ? burstAmount : 15);
+        createBulkConfetti(burstAmount ? burstAmount : 20);
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -90,11 +90,11 @@ function Confetti({haltConfetti, confettiOver, burstAmount}) {
             createConfetti();
         }
         else {
-            if(confetti.length === 0 && confettiOver) {
+            if(confetti.length === 0) {
                 confettiOver();
             }
         }
-    }, 250)
+    }, 100)
 
     // Styles for fullscreen wrapper. Create a page-sized container absolutely positioned over the page.
     const fullscreenStyles = {

@@ -1,0 +1,668 @@
+/****************/
+/* Custom Fonts */
+/****************/
+
+/* Custom fonts with a relative path. */
+/*@font-face {
+    font-family: 'ChevyRay - Babyblocks';
+    src: local('ChevyRay - Babyblocks'), url(./fonts/ChevyRay\ -\ Babyblocks.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'ChevyRay - Little League';
+    src: local('ChevyRay - Little League'), url(./fonts/ChevyRay\ -\ Little\ League.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'ChevyRay - Oeuf';
+    src: local('ChevyRay - Oeuf'), url(./fonts/ChevyRay\ -\ Oeuf.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: 'ChevyRay - Skullboy Mono';
+    src: local('ChevyRay - Skullboy'), url(./fonts/ChevyRay\ \-\ Skullboy\ Mono.ttf) format('truetype');
+}*/
+
+/*******************/
+/* Main App Styles */
+/*******************/
+
+/* Body take 100% of height and width of page. Transparent background. */
+#overlay-body {
+    display: inline-block;
+    background-color: rgba(0, 0, 0, 0);
+    margin: 0px auto;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Border for when a timer is done and needs attention */
+#top, #bottom, #left, #right {
+    background: rgba(255, 0, 0, 0);
+	position: fixed;
+    z-index: -1;
+}
+#left, #right {
+    top: 0; bottom: 0;
+	width: 10px;
+}
+#left { left: 0; }
+#right { right: 0; }
+#top, #bottom {
+	left: 0; right: 0;
+	height: 15px;
+}
+#top { top: 0; }
+#bottom { bottom: 0; }
+
+.border-throb {
+    animation: fade-in 750ms infinite alternate;
+}
+
+@keyframes fade-in {
+    from {
+        background: rgba(255, 0, 0, 0);
+    }
+
+    to {
+        background: rgba(255, 0, 0, 1);
+    }
+}
+
+@keyframes bannerImageSlide {
+    0% {
+        left: 0;
+    }
+    45% {
+        left: 0;
+    }
+    55% {
+        left: -212px;
+    }
+    100% {
+        left: -212px;
+    }
+}
+
+/* Bootstrapped react class. 100% of height and width. Left-aligned horizontal flexbox. */
+#app-left {
+    height: 100vh;
+    width: 50vw;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    float: left;
+}
+
+#app-right {
+    height: 100vh;
+    width: 50vw;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-end;
+    align-content: flex-start;
+}
+
+#timers {
+    width: 100vw;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+/*****************/
+/* Panel Classes */
+/*****************/
+
+/* Panel wrapper. Semi-transparent background. Flex-shrink disabled. */
+.panel-wrapper {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: rgba(50, 50, 50, 0.75);
+    padding: 0px 0px 12px 12px;
+    margin: 10px 0px;
+    min-width: 170px;
+}
+
+.panel-wrapper-left {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: rgba(50, 50, 50, 0.75);
+    padding: 0px 12px 12px 0px;
+    margin: 10px 0px;
+    min-width: 170px;
+}
+
+.panel-wrapper-slide {
+    animation: slide-from-right 750ms forwards;
+}
+
+.panel-wrapper-slide-left {
+    animation: slide-from-left 750ms forwards;
+}
+
+.panel-wrapper-peek-left {
+    animation: peek-from-left 9000ms forwards;
+}
+
+.panel-wrapper-timer-expired {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: rgba(255, 0, 0, 1);
+    padding: 0px 0px 14px 14px;
+    margin: 10px 0px;
+    min-width: 108px;
+}
+
+@keyframes slide-from-right {
+    from {
+        margin-right: -100vw;
+    }
+
+    to {
+        margin-right: 0vw;
+    }
+}
+
+@keyframes slide-from-left {
+    from {
+        margin-left: -100vw;
+    }
+
+    to {
+        margin-left: 0vw;
+    }
+}
+
+@keyframes peek-from-left {
+    0%, 100% {
+        margin-left: -100vw;
+    }
+
+    25%,75% {
+        margin-left: 0vw;
+    }
+}
+
+/* Title-less panel with straightforward border stylings. Still requires panel-content */
+.panel-notitle,
+.panel-notitle-left {
+    color: white;
+    border: 4px solid white;
+    border-right: 0;
+    margin: 12px 0 0 0;
+    padding: 10px 16px 6px 16px;
+}
+
+.panel-notitle-left {
+    border-left: 0;
+    border-right: 4px solid white;
+}
+
+/* Titled panel class. Border drawn on left and bottom. Top border handled by header. */
+.panel {
+    color: white;
+    border-left: 4px solid white;
+    border-bottom: 4px solid white;
+    margin: 1em 0 0 0;
+    padding: 10px 16px 6px 16px;
+}
+
+.panel-left {
+    display: flex;
+    position: relative;
+    color: white;
+    border-right: 4px solid white;
+    border-bottom: 4px solid white;
+    margin: 1em 0 0 0;
+    padding: 30px 16px 6px 16px;
+}
+
+/* Hacky-header. Adjust top class when changing font size. */
+.panel-header,
+.panel-header-left {
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    font-size: 0.8em;
+    font-weight: bold;
+    font-family: 'ChevyRay - Little League';
+}
+
+.panel-header {
+    position: relative;
+    top: -1.6em;
+}
+
+.panel-header-left {
+    position: absolute;
+    right: 10px;
+    top: -7px;
+}
+
+/* Panel-header psudo classes handle top border line without drawing over text. */
+.panel-header:before,
+.panel-header-left:before,
+.panel-header:after,
+.panel-header-left:after {
+    content: "";
+    position: absolute;
+    height: 4px;
+    background: white;
+    top: 40%;
+}
+.panel-header:before {
+    width: 20px;
+    left: -20px;
+}
+.panel-header-left:before {
+    width: 10px;
+    right: -10px;
+}
+.panel-header:after {
+    width: 1000px;
+    right: -1000px;
+}
+.panel-header-left:after {
+    width: 1000px;
+    left: -1004px;
+}
+
+.panel-image,
+.panel-image-left {
+    width: 100px;
+    height: 100px;
+    margin-top: -1.35em;
+    padding-right: 15px;
+}
+
+.panel-content-group-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* New Image Panel Styles */
+/* Default Styles */
+.panel-image-wrapper-none {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: rgba(50, 50, 50, 0.75);
+    padding: 0px 12px 12px 0px;
+    margin: 10px 0px;
+    min-width: 170px;
+}
+
+.panel-image-wrapper-slide-none {
+    animation: slide-from-left 750ms forwards;
+}
+
+.panel-image-notitle-none {
+    color: white;
+    border: 4px solid white;
+    border-left: 0;
+    margin: 12px 0 0 0;
+    padding: 12px;
+}
+
+.panel-image-content-group-none {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.panel-new-image-none {
+    max-height: 800px;
+    max-width: 600px !important;
+}
+
+/* 90deg Clockwise Rotation */
+.panel-image-wrapper-cw {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: rgba(50, 50, 50, 0.75);
+    padding: 0px 12px 0px 12px;
+    margin: 10px 10px;
+    min-width: 170px;
+    transform-origin:top left;
+    transform: rotate(90deg) translateY(-100%) ;
+}
+
+.panel-image-wrapper-slide-cw {
+    animation: slide-from-left 750ms forwards;
+}
+
+.panel-image-notitle-cw {
+    color: white;
+    border: 4px solid white;
+    border-bottom: 0;
+    margin: 12px 0 0 0;
+    padding: 12px;
+}
+
+.panel-image-content-group-cw {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.panel-new-image-cw {
+    max-height: 600px;
+    max-width: 800px !important;
+}
+
+/* 270deg Counter Clockwise Rotation */
+.panel-image-wrapper-ccw {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: rgba(50, 50, 50, 0.75);
+    padding: 0px 12px 0px 12px;
+    margin: 10px 10px;
+    min-width: 170px;
+    transform-origin:top left;
+    transform: rotate(270deg) translateX(-100%) ;
+}
+
+.panel-image-wrapper-slide-ccw {
+    animation: slide-from-left 750ms forwards;
+}
+
+.panel-image-notitle-ccw {
+    color: white;
+    border: 4px solid white;
+    border-top: 0;
+    margin: 0px 0px 12px 0px;
+    padding: 12px;
+}
+
+.panel-image-content-group-ccw {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.panel-new-image-ccw {
+    max-height: 600px;
+    max-width: 800px !important;
+}
+
+/* 180degree flip */
+.panel-image-wrapper-flip {
+    flex: 0 0 auto;
+    overflow: hidden;
+    background: rgba(50, 50, 50, 0.75);
+    padding: 0px 12px 12px 0px;
+    margin: 10px 0px;
+    min-width: 170px;
+}
+
+.panel-image-wrapper-slide-flip {
+    animation: slide-from-left 750ms forwards;
+}
+
+.panel-image-notitle-flip {
+    color: white;
+    border: 4px solid white;
+    border-left: 0;
+    margin: 12px 0 0 0;
+    padding: 12px;
+}
+
+.panel-image-content-group-flip {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.panel-new-image-flip {
+    max-height: 800px;
+    max-width: 600px !important;
+    transform: rotate(180deg);
+}
+
+/* Content stylings. Mostly control font size. */
+/* Standard panel */
+.panel-content,
+.panel-content-left,
+.panel-content-nomargin {
+    margin-top: -0.5em;
+    font-family: 'ChevyRay - Oeuf';
+    font-size: 2em;
+    margin-bottom: 0px;
+}
+
+.panel-content-nomargin {
+    margin-top: 0;
+}
+
+/* Smaller sub-title text. */
+.panel-subcontent {
+    margin-top: 0.2em;
+    font-family: 'ChevyRay - Oeuf';
+    font-size: 1.25em;
+    margin-bottom:0px;
+}
+
+/* XL Title Content Content */
+.panel-xlcontent {
+    margin-top: -0.2em;
+    font-family: 'ChevyRay - Oeuf';
+    font-size: 3.25em;
+    margin-bottom:0px;
+}
+
+/* Temp Chart Container Styles */
+.chartjs-render-monitor {
+    margin-bottom: -10px;
+}
+
+.panel-content-temp {
+    margin-top: -0.1em;
+    font-family: 'ChevyRay - Skullboy Mono';
+    font-size: 3.5em;
+    margin-bottom: 0px;
+}
+
+.panel-content-group-left canvas {
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.panel-chart {
+    padding-bottom: 5px;
+    margin-bottom: 0px;
+}
+
+.panel-chart-alert {
+    border-top: 4px solid red;
+    border-right: 4px solid red;
+    border-bottom: 4px solid red;
+}
+
+.panel-chart-stats {
+    width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    font-family: 'ChevyRay - Skullboy Mono';
+    -webkit-font-smoothing: none;
+    image-rendering: pixelated;
+}
+
+.panel-chart-hidden {
+    visibility: hidden;
+}
+
+
+.panel-chart-icon {
+    flex: 1 1 auto;
+    text-align: center;
+}
+
+.panel-chart-temp {
+    flex: 2 1 auto;
+}
+
+.panel-chart-target {
+    flex: 2 1 auto;
+}
+
+.panel-chart-no-target {
+    flex: 0 1 auto;
+    margin: 0px 10px;
+}
+
+.panel-chart-f {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.panel-chart-c {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    margin-top: -5px;
+}
+
+.panel-chart-image {
+    height: 2.75rem;
+}
+
+.panel-chart-image-large {
+    height: 2.4rem;
+    margin: 0px 3px 0px 3px;
+}
+
+.panel-chart-text-large {
+    font-size: 3rem;
+}
+
+.panel-chart-image-small {
+    height: 2rem;
+    margin: 0px 2px 0px 1px;
+}
+
+.panel-chart-text-small {
+    font-size: 2.5rem;
+    color: #ccc;
+}
+
+
+.panel-chart-stat2 {
+    width: 50%;
+    display: inline-flex;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+    align-content: stretch;
+}
+
+.panel-chart-icon2 {
+    flex: 1 1 auto;
+    margin: 0px 5px;
+    text-align: center;
+}
+
+.panel-chart-stat-group2 {
+    flex: 2 1 auto;
+    display: inline;
+    
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+}
+.panel-chart-reading2 {
+    display: inline;
+    margin: 0px 2px;
+    flex: 2 1 auto;
+    text-align: center;
+}
+.panel-chart-degree2 {
+    display: inline;
+    margin: 0px 2px;
+}
+.panel-chart-unit2 {
+    display: inline;
+    margin: 0px 2px;
+}
+
+.panel-chart-image-large2 {
+    height: 1.5rem;
+    image-rendering: pixelated;
+}
+
+.panel-chart-image-small2 {
+    height: 1rem;
+    image-rendering: pixelated;
+}
+
+.panel-chart-text-large2 {
+    font-size: 1.75rem;
+    font-family: 'ChevyRay - Skullboy Mono';
+    -webkit-font-smoothing: none;
+}
+
+.panel-chart-text-small2 {
+    font-size: 1.25rem;
+    font-family: 'ChevyRay - Skullboy Mono';
+    -webkit-font-smoothing: none;
+    color: #ccc;
+}
+
+/* Custom-spaced content for timers. */
+.panel-timer {
+    color: white;
+    border-left: 4px solid white;
+    border-bottom: 4px solid white;
+    margin: 1em 0 0 0;
+    padding: 10px 8px 6px 16px;
+}
+
+.panel-timercontent {
+    font-family: 'ChevyRay - Oeuf';
+    font-size: 3.8em;
+    margin: -14px 0 -7px 0;
+    text-align: center;
+}
+
+.panel-timercolon {
+    position: relative;
+    top: -9px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+/* Content-less panel for holding video. */
+.panel-videocontent {
+    content: "";
+    width: 475px;
+    height: 300px;
+}
+
+.panel-image-content,
+twitter-widget {
+    max-height: 800px;
+    max-width: 600px !important;
+}
+
+.twitter-tweet {
+    display: none;
+}
+
+.d-none {
+    display: none;
+}
