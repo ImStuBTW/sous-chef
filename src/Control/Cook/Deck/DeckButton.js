@@ -9,6 +9,7 @@ import './deckButton.scss';
 
 class DeckButton extends Component {
   handleClick = () => {
+    console.log('DeckButton.js | handleClick | Emitting \'' + this.props.command + '\' with: ' + this.props.argument);
     this.props.socket.emit(this.props.command, this.props.argument);
   };
 
