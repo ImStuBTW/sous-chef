@@ -7,7 +7,7 @@ module.exports = function(io) {
 
     fs.readFile('currentMessages.json', (err, data) => {
         if (err) {
-            console.log('Could not read saved messages file. Perhaps one doesn\'t exist yet?');
+            console.log('botmessages.js | readfile(\'currentMessages.json\') | Could not read saved messages file. Perhaps one doesn\'t exist yet?');
             console.error(err);
             messageInfo = {messages: [], interval: 1800, enabled: false}
         } else {
@@ -61,7 +61,7 @@ module.exports = function(io) {
     io.on('connection', (socket) => {
         // FETCH MESSAGES
         socket.on('message-fetch', (fn) => {
-            console.log(`Sending current messages info: ${JSON.stringify(messageInfo)}`);
+            console.log(`botmessages.js | 'message-fetch' | Sending current messages info: ${JSON.stringify(messageInfo)}`);
             fn(messageInfo);
 
             if (!timer && messageInfo.enabled) {
@@ -71,7 +71,7 @@ module.exports = function(io) {
 
         // UPDATE MESSAGES
         socket.on('message-update', function(msg) {
-            console.log(`Setting messages: '${JSON.stringify(msg.messages)}', interval: ${msg.interval}, enabled: ${msg.enabled}`);
+            console.log(`botmessages.js | 'message-update' | Setting messages: '${JSON.stringify(msg.messages)}', interval: ${msg.interval}, enabled: ${msg.enabled}`);
             fs.writeFile('currentMessages.json', JSON.stringify(msg), (err) => {
                 if (err) { console.log(err); }
             });

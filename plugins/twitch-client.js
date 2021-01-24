@@ -140,7 +140,7 @@ module.exports = function(io) {
             await chatClient.connect();
             await chatClient.waitForRegistration();
             await chatClient.join('andrewcooks');
-            console.log("Twitch Chat Connected.");
+            console.log("twitch-client.js | Twitch Chat Connected.");
             twitchBot.chatClient = chatClient;
 
             // Even listeners. Emmit Socket.IO events with all chat objects.
@@ -219,19 +219,19 @@ module.exports = function(io) {
                 });
                 followers.push('andrewcooks'); // Don't forget me!
     
-                console.log('twitch.js  Latest Follower: ' + result[0]._data.from_name);
+                console.log('twitch-client.js | Latest Follower: ' + result[0]._data.from_name);
                 latestFollower = result[0]._data.from_name;
             }
             // If there's a new Twitch follower, send it.
             else if(latestFollower !== result[0]._data.from_name) {
                 latestFollower = result[0]._data.from_name;
-                console.log(`twitch.js  New Follower: ${latestFollower}`);
+                console.log(`twitch-client.js | New Follower: ${latestFollower}`);
                 followers.push(latestFollower.toLowerCase());
                 io.emit(events.FOLLOW, {user: latestFollower});
                 triggerCallback(events.FOLLOW, {user: latestFollower});
             }
             else {
-                //console.log('twitch.js  Latest Follower Still: ' +result[0]._data.from_name);
+                //console.log('twitch-client.js  Latest Follower Still: ' +result[0]._data.from_name);
                 // Send latest follower during testing. Omit when live.
                 io.emit('twitch-follower', result[0]._data.from_name);
             }
@@ -305,16 +305,11 @@ module.exports = function(io) {
 
         // ON init: Send state data to clients.
         socket.on('init', () => {
-            console.log('twitch.js init');
+            console.log('twitch-client.js | init');
             socket.emit('twitch-status', twitchBot.authenticated);
         });
 
-        // On header-init: Send state to client navbar.
-        socket.on('header-init', () => {
-            console.log('twitch.js header-init');
-            socket.emit('twitch-status', twitchBot.authenticated);
-        });
-
+        // ON twitter-fetch: Send state data to clients.
         socket.on('twitch-fetch', (fn) => {
             fn(twitchBot.authenticated);
         });
@@ -322,7 +317,7 @@ module.exports = function(io) {
         // ON twitch-connect-bot: Initiate Twitch OAuth login sequence.
         socket.on('twitch-connect-bot', () => {
 
-            console.log('twitch-connect-bot');
+            console.log('twitch-client.js | twitch-connect-bot');
             const provider = getProvider();
             let window = getWindow();
         
@@ -331,7 +326,7 @@ module.exports = function(io) {
             provider.perform(window).then(async (resp) => {
                 window.close()
                 const token = qs.parse(resp).access_token; // query-string package reads ?=access_token from returned URL
-                console.log("twitch.js Twitch OAuth: Access Token: " + token);
+                console.log("twitch-client.js | twitch-connect-bot | Twitch OAuth: Access Token: " + token);
                 store.delete(botAccessToken);
                 store.set(botAccessToken, token); // Save token to storage
                 connectBot();
@@ -344,7 +339,7 @@ module.exports = function(io) {
 
         socket.on('twitch-connect-owner', () => {
 
-            console.log('twitch-connect-owner');
+            console.log('twitch-client.js | twitch-connect-owner');
             const provider = getProvider();
             let window = getWindow();
         
@@ -353,7 +348,7 @@ module.exports = function(io) {
             provider.perform(window).then(async (resp) => {
                 window.close()
                 const token = qs.parse(resp).access_token; // query-string package reads ?=access_token from returned URL
-                console.log("twitch.js Twitch OAuth: Access Token: " + token);
+                console.log("twitch-client.js | twitch-connect-owner | Twitch OAuth: Access Token: " + token);
                 store.delete(ownerAccessToken);
                 store.set(ownerAccessToken, token); // Save token to storage
                 connectBroadcaster();

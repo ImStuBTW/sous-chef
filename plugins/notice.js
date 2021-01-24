@@ -18,7 +18,7 @@ module.exports = function(io, clientSocket) {
             return;
         }
 
-        console.log(`Setting notice: ${JSON.stringify(noticeInfo)}`);
+        console.log(`notice.js | Setting notice: ${JSON.stringify(noticeInfo)}`);
         io.emit('notice-info', {show: msg.show, users: noticeInfo.users, sound: msg.sound});
     };
 
@@ -28,7 +28,7 @@ module.exports = function(io, clientSocket) {
     io.on('connection', (socket) => {
         // FETCH NOTICE
         socket.on('notice-fetch', (fn) => {
-            console.log(`Sending current notice info: ${JSON.stringify(noticeInfo)}`);
+            console.log(`notice.js | notice-fetch | Sending current notice info: ${JSON.stringify(noticeInfo)}`);
             fn(noticeInfo);
         });
 

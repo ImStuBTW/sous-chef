@@ -8,12 +8,12 @@ module.exports = function(io, clientSocket) {
     // Do nothing if bubbles is stopping.
     clientSocket.on('bubbles-toggle', () => {
         if(bubbles.state === 'start') {
-            console.log('bubbles.js bubbles-toggle: Stopping');
+            console.log('bubbles.js | bubbles-toggle | Stopping bubbles.');
             bubbles.state = 'stopping';
             io.emit('bubbles-state', bubbles);
         }
         else if(bubbles.state === 'stop') {
-            console.log('bubbles.js bubbles-toggle: Starting');
+            console.log('bubbles.js | bubbles-toggle | Starting bubbles.');
             bubbles.state = 'start';
             io.emit('bubbles-state', bubbles);
         }
@@ -22,13 +22,13 @@ module.exports = function(io, clientSocket) {
     io.on('connection', (socket) => {
         // FETCH BUBBLES
         socket.on('bubbles-fetch', (fn) => {
-            console.log(`bubbles.js bubbles-fetch Sending current bubbles state: ${bubbles.state}`);
+            console.log(`bubbles.js | bubbles-fetch | Sending current bubbles state: ${bubbles.state}`);
             fn(bubbles);
         });
 
         // UPDATE BUBBLES
         socket.on('bubbles-update', (msg) => {
-            console.log(`bubbles.js bubbles-update Bubbles state: ${msg.state}`);
+            console.log(`bubbles.js | bubbles-update | Bubbles state: ${msg.state}`);
             bubbles = msg;
             io.emit('bubbles-state', msg);
         });
@@ -36,12 +36,12 @@ module.exports = function(io, clientSocket) {
         // TOGGLE BUBBLES
         socket.on('bubbles-toggle', () => {
             if(bubbles.state === 'start') {
-                console.log('bubbles.js bubbles-toggle: Stopping');
+                console.log('bubbles.js | bubbles-toggle | Stopping bubbles.');
                 bubbles.state = 'stopping';
                 io.emit('bubbles-state', bubbles);
             }
             else if(bubbles.state === 'stop') {
-                console.log('bubbles.js bubbles-toggle: Starting');
+                console.log('bubbles.js | bubbles-toggle | Starting bubbles.');
                 bubbles.state = 'start';
                 io.emit('bubbles-state', bubbles);
             }

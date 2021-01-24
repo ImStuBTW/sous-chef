@@ -9,13 +9,13 @@ module.exports = function(io, clientSocket) {
 
     // Connect twitch events that we care about.
     twitch.on(twitch.events.HOST, (msg) => {
-        console.log(`HOST! ${msg.byChannel} hosted with ${msg.count} viewers`);
+        console.log(`twitch.js | HOST! ${msg.byChannel} hosted with ${msg.count} viewers`);
         io.emit('confetti-single', {});
         twitch.sendBotChatMsg(`Thank you for the host ${msg.byChannel}! Everyone please give them a follow! ${twitchUrl}${msg.byChannel}`);
     });
 
     twitch.on(twitch.events.RAID, (msg) => {
-        console.log(`RAID! User: ${msg.raidingUser}${msg.raidingDisplayName ? ` (${msg.raidingDisplayName}, ${msg.raidingViewerCount} viewers)` : ''}`);
+        console.log(`twitch.js | RAID! User: ${msg.raidingUser}${msg.raidingDisplayName ? ` (${msg.raidingDisplayName}, ${msg.raidingViewerCount} viewers)` : ''}`);
         io.emit('confetti-state', {state: 'start'});
         twitch.sendBotChatMsg(`Thank you so much for the raid ${msg.raidingUser}! Everyone please give them a follow! ${twitchUrl}${msg.raidingUser}`);
     });
@@ -66,7 +66,7 @@ module.exports = function(io, clientSocket) {
             let match = confettiRegEx.exec(lowerMessage);
 
             if (match) {
-                console.log(`${msg.user} triggered a confetti burst`);
+                console.log(`twitch.js | ${msg.user} triggered a confetti burst`);
                 let props = {};
                 if (match[1] && twitch.isSub(msg.user)) {
                     let amt = parseInt(match[1]);
@@ -79,7 +79,7 @@ module.exports = function(io, clientSocket) {
             match = bubbleRegEx.exec(lowerMessage);
 
             if (match) {
-                console.log(`${msg.user} triggered a bubble burst`);
+                console.log(`twitch.js | ${msg.user} triggered a bubble burst`);
                 let props = {};
                 if (match[1] && twitch.isSub(msg.user)) {
                     let amt = parseInt(match[1]);
@@ -94,7 +94,7 @@ module.exports = function(io, clientSocket) {
 
             if (match) {
                 let sound = 'hey';
-                console.log(`${msg.user} wanted to get our attention`);
+                console.log(`twitch.js | ${msg.user} wanted to get our attention`);
 
                 if (match[1] === 'listen' && twitch.isSub(msg.user)) {
                     sound = 'listen';
@@ -107,7 +107,7 @@ module.exports = function(io, clientSocket) {
 
             if (match) {
                 if (match[1]) {
-                    console.log(`${msg.user} triggered a scene change`);
+                    console.log(`twitch.js | ${msg.user} triggered a scene change`);
                     io.emit('obs-scene-switch', {sceneTag: match[1], user: msg.user, isSub: twitch.isSub(msg.user)});
                 }
             }
@@ -118,15 +118,15 @@ module.exports = function(io, clientSocket) {
                 let command = match[1], answer = match[2];
                 switch(command) {
                     case 'trivia':
-                        console.log(`${msg.user} requested trivia intro.`);
+                        console.log(`twitch.js | ${msg.user} requested trivia intro.`);
                         io.emit('trivia-intro');
                         break;
                     case 'question':
-                        console.log(`${msg.user} requested current trivia question.`);
+                        console.log(`twitch.js | ${msg.user} requested current trivia question.`);
                         io.emit('trivia-question');
                         break;
                     case 'answer':
-                        console.log(`${msg.user} submitted an answer: ${answer}`);
+                        console.log(`twitch.js | ${msg.user} submitted an answer: ${answer}`);
                         if (answer && answer.trim() !== '') {
                             io.emit('trivia-answer', {answer: answer.toLowerCase(), user: msg.user});
                         }

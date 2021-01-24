@@ -17,7 +17,7 @@ module.exports = function(io) {
 
     function emitNowPlaying(currentTrack) {
         if (currentTrack.playerState === 'playing') {
-            console.log(`itunes-mac playing: ${currentTrack.name}`);
+            console.log(`itunes-mac.js | playing: ${currentTrack.name}`);
             io.emit('itunes-playing', {
                 track: currentTrack.name,
                 artist: currentTrack.artist,

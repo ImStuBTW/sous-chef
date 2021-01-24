@@ -16,7 +16,7 @@ module.exports = function(io) {
     }
 
     function emitNowPlaying(currentTrack) {
-        console.log(`itunes-win playing: ${currentTrack.artist}, ${currentTrack.name}`);
+        console.log(`itunes-win.js | Playing: ${currentTrack.artist}, ${currentTrack.name}`);
         io.emit('itunes-playing', {
             track: currentTrack.name,
             artist: currentTrack.artist,

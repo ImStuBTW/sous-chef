@@ -8,12 +8,12 @@ module.exports = function(io, clientSocket) {
     // Stop confetti if confetti is running.
     clientSocket.on('confetti-toggle', () => {
         if(confetti.state === 'start') {
-            console.log('confetti.js confetti-toggle: Stopping');
+            console.log('confetti.js | confetti-toggle | Stopping confetti.');
             confetti.state = 'stopping';
             io.emit('confetti-state', confetti);
         }
         else if(confetti.state === 'stop') {
-            console.log('confetti.js confetti-toggle: Starting');
+            console.log('confetti.js | confetti-toggle |  Starting confetti');
             confetti.state = 'start';
             io.emit('confetti-state', confetti);
         }
@@ -22,13 +22,13 @@ module.exports = function(io, clientSocket) {
     io.on('connection', (socket) => {
         // FETCH CONFETTI
         socket.on('confetti-fetch', (fn) => {
-            console.log(`confetti.js confetti-fetch Sending current confetti state: ${confetti.state}`);
+            console.log(`confetti.js | confetti-fetch | Sending current confetti state: ${confetti.state}`);
             fn(confetti);
         });
 
         // UPDATE CONFETTI
         socket.on('confetti-update', (msg) => {
-            console.log(`confetti.js confetti-update Confetti state: ${msg.state}`);
+            console.log(`confetti.js | confetti-update | Confetti state: ${msg.state}`);
             confetti = msg;
             io.emit('confetti-state', msg);
         });
@@ -36,12 +36,12 @@ module.exports = function(io, clientSocket) {
         // TOGGLE CONFETTI
         socket.on('confetti-toggle', (msg) => {
             if(confetti.state === 'start') {
-                console.log('confetti.js confetti-toggle: Stopping');
+                console.log('confetti.js | confetti-toggle | Stopping confetti.');
                 confetti.state = 'stopping';
                 io.emit('confetti-state', confetti);
             }
             else if(confetti.state === 'stop') {
-                console.log('confetti.js confetti-toggle: Starting');
+                console.log('confetti.js | confetti-toggle | Starting confetti.');
                 confetti.state = 'start';
                 io.emit('confetti-state', confetti);
             }

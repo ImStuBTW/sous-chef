@@ -4,13 +4,13 @@ module.exports = function(io) {
     io.on('connection', (socket) => {
         // FETCH BANNER
         socket.on('banner-fetch', (fn) => {
-            console.log(`Sending current banner info: ${bannerInfo.show}`);
+            console.log(`banner.js | banner-fetch | Sending banner info: ${bannerInfo.show}`);
             fn(bannerInfo);
         });
 
         // UPDATE BANNER
         socket.on('banner-update', function(msg) {
-            console.log(`Setting banner show state '${msg.show}'`);
+            console.log(`banner.js | banner-update | Setting banner to: ${msg.show}`);
             bannerInfo = msg;
             io.emit('banner-info', msg);
         });
