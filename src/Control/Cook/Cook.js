@@ -25,12 +25,12 @@ class Cook extends Component {
             <Deck socket={this.props.socket} />
           </Col>
           <Col lg>
-            <ActiveTimers />
+            <ActiveTimers socket={this.props.socket} />
           </Col>
         </Row>
         <Row>
           <Col>
-            <CreateTimer />
+            <CreateTimer socket={this.props.socket} />
           </Col>
         </Row>
         <Row>
