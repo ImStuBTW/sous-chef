@@ -9,7 +9,7 @@ import ListGroup from 'react-bootstrap/ListGroup';
 import TimerEntry from './TimerEntry';
 
 // Import component stylings.
-import './activeTimers.scss';
+import './timerList.scss';
 
 // Initialize the current list of timers as an empty array.
 const emptyTimers = [];
@@ -24,31 +24,59 @@ class ActiveTimers extends Component {
   }
 
   componentDidMount() {
-    // Listen for new timers.
+    // Listen for new timers. Update state to include timer.
     this.props.socket.on('timer-added', (msg) => {
       console.log('ActiveTimers.js | timer-added:');
       console.log(msg);
+      this.setState({timers: [...this.state.timers, msg]})
     });
 
     // Listen for expired timers.
+    // Update timers list with the timer that has reached 0 in case UI has not caught up yet.
     this.props.socket.on('timer-expired', (msg) => {
       console.log('ActiveTimers.js | timer-expired:');
       console.log(msg);
+      this.setState({
+        timers: this.state.timers.map((timer) => {
+          if(timer.id === msg.id) {
+            return msg;
+          }
+          else {
+            return timer;
+          }
+        })
+      });
     });
 
     // Listen for restarted timers.
+    // Replace current timer time with restarted value from server.
     this.props.socket.on('timer-restart', (msg) => {
       console.log('ActiveTimers.js | timer-restart:');
       console.log(msg);
+      this.setState({
+        timers: this.state.timers.map((timer) => {
+          if(timer.id === msg.id) {
+            return msg;
+          }
+          else {
+            return timer;
+          }
+        })
+      });
     });
 
     // Listen for deleted timers.
+    // Remove deleted timers from list.
     this.props.socket.on('timer-deleted', (msg) => {
       console.log('ActiveTimers.js | timer-deleted:');
       console.log(msg);
+      this.setState({timers: this.state.timers.filter((timer) => {
+        return timer.id !== msg.id;
+      })});
     });
 
-    // Listen for all timers expired.
+    // Listen for all timers expired. (Fallback in case timer list has gotten out of date.)
+    // If 'timer-empty' is triggered, set timer list to empty array.
     this.props.socket.on('timer-empty', (msg) => {
       console.log('ActiveTimers.js | timer-empty:');
       console.log(msg);
@@ -63,11 +91,14 @@ class ActiveTimers extends Component {
     });
   }
 
+  // Render the list of timers.
+  // TimerEntry's key is a combination of timer.id and timer.seconds.
+  // This causes the TimerEntry component to re-render and properly update the remaining time for 'timer-restart'.
   render() {
-    let renderedTimers = <ListGroup.Item>No Active Timers</ListGroup.Item>
-    if(this.state.timers !== []) {
+    let renderedTimers = <ListGroup.Item>No Active Timers</ListGroup.Item>;
+    if(this.state.timers.length !== 0) {
       renderedTimers = this.state.timers.map((timer) => {
-        return <TimerEntry key={timer.id} name={timer.name} seconds={timer.seconds} />;
+        return <TimerEntry key={timer.id + '-' + timer.seconds} id={timer.id} name={timer.name} seconds={timer.seconds} socket={this.props.socket} />;
       });
     }
 

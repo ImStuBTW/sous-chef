@@ -19,7 +19,7 @@ module.exports = function(io) {
         // Keep track of the timer on the server, then broadcast the new timer
         // info to all listeners.
         socket.on('timer-new', function(msg) {
-            console.log(`timer.js | timer-new | New timer named '${msg.name}' w/${msg.seconds}secs`);
+            console.log(`timer.js | timer-new | New timer: '${msg.name}', Duration: ${msg.seconds} seconds`);
 
             // Callback that updates the timer state every second.
             let updateSeconds = (id, name, seconds, event) => {
@@ -33,7 +33,11 @@ module.exports = function(io) {
 
             let targetAchieved = (id) => {
                 console.log(`timer.js | Timer '${msg.name}' is done.`);
-                io.emit('timer-expired', msg);
+                io.emit('timer-expired', {
+                    id: msg.id,
+                    name: msg.name,
+                    seconds: '0'
+                });
             };
             
             streamTimers.push(new StreamTimer(msg.id, msg.name, msg.seconds, null, targetAchieved));
@@ -51,9 +55,12 @@ module.exports = function(io) {
             let index = TimerUtil.getTimerIndexWithId(streamTimers, msg.id);
             if (index >= 0) {
                 streamTimers[index].repeatTimer();
+                io.emit('timer-restart', {
+                    id: msg.id,
+                    name: msg.name,
+                    seconds: TimerUtil.extractTimerInfo(streamTimers[index]).seconds
+                });
             }
-
-            io.emit('timer-restart', msg);
         });
 
         // DELETE TIMER
@@ -61,7 +68,7 @@ module.exports = function(io) {
         // A timer can be deleted while in progress or after reaching 0.
         // Broadcast the deletion to all listeners once we remove it from the server.
         socket.on('timer-delete', function(msg) {
-            console.log(`timer.js | timer-delete | Deleting timer '${msg.name}' w/${msg.seconds}secs remaining`);
+            console.log(`timer.js | timer-delete | Deleting timer: '${msg.name}', ${msg.seconds} seconds remaining.`);
 
             let index = TimerUtil.getTimerIndexWithId(streamTimers, msg.id);
             if (index >= 0) {

@@ -42,7 +42,9 @@ class CreateTimer extends Component {
   handleSubmit(event) {
     event.preventDefault();
     const newName = ((this.state.name) ? this.state.name : 'Timer McTimerface');
-    const totalSeconds = 0 + (parseInt(this.state.minutes)*60) + parseInt(this.state.seconds);
+    let totalSeconds = 0;
+    if(parseInt(this.state.minutes)) { totalSeconds += (parseInt(this.state.minutes)*60); }
+    if(parseInt(this.state.seconds)) { totalSeconds += parseInt(this.state.seconds); }
     this.props.socket.emit('timer-new', {
       id: uuid(),
       name: newName,

@@ -61,7 +61,7 @@ module.exports = function(io) {
         // Use when starting probe monitoring or switching ports.
         socket.on('probe-start', (msg) => {
             // Check and see if SerialPort has already been initiated.
-            console.log('probe.js | probe-start | Initializing probe on port: ' msg.path);
+            console.log('probe.js | probe-start | Initializing probe on port: ' + msg.path);
             if(port) {
                 // If the port's already initialized, check and see if it's been closed.
                 // If closed, create a new instance on the updated path.
@@ -104,13 +104,13 @@ module.exports = function(io) {
 
         // When 'probe-display' is recieved, update the tempHidden state.
         socket.on('probe-display', (msg) => {
-            console.log('probe.js | probe-display | Setting probe temp overlay display to: ' msg.tempHidden);
+            console.log('probe.js | probe-display | Setting probe temp overlay display to: ' + msg.tempHidden);
             tempHidden = msg.tempHidden;
         })
 
         // When 'probe-chart' is recieved, update the chartHidden state;
         socket.on('probe-chart', (msg) => {
-            console.log('probe.js | probe-chart | Setting probe chart overlay display to: ' msg.tempHidden);
+            console.log('probe.js | probe-chart | Setting probe chart overlay display to: ' + msg.tempHidden);
             chartHidden = msg.chartHidden;
         })
         

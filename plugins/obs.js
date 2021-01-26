@@ -51,7 +51,7 @@ module.exports = function(io, clientSocket) {
             obsConnected = false;
             io.emit('obs-status', false);
             io.emit('obs-scenes', []);
-            console.log('obs-connect: Something went wrong connecting to OBS.');
+            console.log('obs.js | obs-connect | Something went wrong connecting to OBS.');
             console.log(err);
         });
     }
@@ -104,15 +104,15 @@ module.exports = function(io, clientSocket) {
                 bindings.forEach(binding => {
                     globalShortcut.register(binding.key, () => { 
                         if (binding.scene) {
-                            console.log(`${binding.key}: Scene switch to ${binding.scene}`); 
+                            console.log(`obs.js | ${binding.key}: Scene switch to ${binding.scene}`); 
                             obsChangeScene(binding.scene);
                         }
                         else if (binding.command) {
-                            console.log(`${binding.key}: Sending OBS command ${binding.command}`);
+                            console.log(`obs.js | ${binding.key}: Sending OBS command ${binding.command}`);
                             obsSendCommand(binding.command, binding.params);
                         }
                         else if (binding.emit) {
-                            console.log(`${binding.key}: Socket emit ${binding.emit}`);
+                            console.log(`obs.js | ${binding.key}: Socket emit ${binding.emit}`);
                             io.emit(binding.emit);
                         }
                     });

@@ -1,0 +1,36 @@
+.timer-entry-text {
+  margin-top: 6px;
+}
+
+.timer-entry-button {
+  margin-top: 0px !important;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
+
+.timer-entry-button-image {
+  height: 25px;
+  margin: auto;
+}
+
+.timer-entry-flashing {
+  background: rgba(255, 0, 0, 1);
+  animation: blink 500ms infinite alternate;
+}
+
+@keyframes blink {
+  0% {
+      background: red;
+      color: white;
+  }
+
+  25%  {
+      background: red;
+      color: white;
+  }
+
+  100% {
+      background: white;
+      color: #212529;
+  }
+}

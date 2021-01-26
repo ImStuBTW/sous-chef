@@ -8,7 +8,7 @@ import Col from 'react-bootstrap/Col';
 
 // Include app componnets
 import Deck from './Deck/Deck';
-import ActiveTimers from './Timers/ActiveTimers';
+import TimerList from './Timers/TimerList';
 import CreateTimer from './Timers/CreateTimer';
 import Image from './Image/Image';
 import Twitter from './Twitter/Twitter';
@@ -25,7 +25,7 @@ class Cook extends Component {
             <Deck socket={this.props.socket} />
           </Col>
           <Col lg>
-            <ActiveTimers socket={this.props.socket} />
+            <TimerList socket={this.props.socket} />
           </Col>
         </Row>
         <Row>
