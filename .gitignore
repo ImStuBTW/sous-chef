@@ -24,6 +24,7 @@ yarn-error.log*
 
 /out
 .twitch-keys.json
+.twitter-keys.json
 currentMessages.json
 keyBindings.json
 trivia.json

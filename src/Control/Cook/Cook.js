@@ -35,27 +35,27 @@ class Cook extends Component {
         </Row>
         <Row>
           <Col>
-            <Image />
+            <Image socket={this.props.socket} />
           </Col>
         </Row>
         <Row>
           <Col>
-            <Twitter />
+            <Twitter socket={this.props.socket} />
           </Col>
         </Row>
         <Row>
           <Col>
-            <Probe />
+            <Probe socket={this.props.socket} />
           </Col>
         </Row>
         <Row>
           <Col>
-            <Toggles />
+            <Toggles socket={this.props.socket} />
           </Col>
         </Row>
         <Row>
           <Col>
-            <Producers />
+            <Producers socket={this.props.socket} />
           </Col>
         </Row>
       </Container>
