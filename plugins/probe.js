@@ -91,14 +91,14 @@ module.exports = function(io) {
         // When 'probe-stop' is recieved, close any open probes.
         socket.on('probe-stop', () => {
             console.log('probe.js | probe-stop | Stopping probe.');
-            if(port.isOpen) {
+            if(port && port.isOpen) {
                 port.close();
             }
         })
 
         // When 'probe-target' is recieved, update the Target state.
         socket.on('probe-target', (msg) => {
-            console.log('probe.js | probe-target | Setting target to: ' + msg.target + 'F.')
+            console.log('probe.js | probe-target | Setting target to: ' + msg.target + ' °F.')
             target = msg.target;
         })
 
@@ -110,7 +110,7 @@ module.exports = function(io) {
 
         // When 'probe-chart' is recieved, update the chartHidden state;
         socket.on('probe-chart', (msg) => {
-            console.log('probe.js | probe-chart | Setting probe chart overlay display to: ' + msg.tempHidden);
+            console.log('probe.js | probe-chart | Setting probe chart overlay display to: ' + msg.chartHidden);
             chartHidden = msg.chartHidden;
         })
         
