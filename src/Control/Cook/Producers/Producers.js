@@ -1,3 +1,6 @@
+// Import React packages.
+import { Component } from 'react';
+
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -7,39 +10,83 @@ import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 
 import './producers.scss';
 
-function Producers(props) {
-  return (
-    <Card className="producers-panel">
+class Producers extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      list: '',
+      subs: false
+    }
+
+    this.handleFormChange = this.handleFormChange.bind(this);
+    this.handleSubToggle = this.handleSubToggle.bind(this);
+    this.handleProducerUpdate = this.handleProducerUpdate.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.socket.on('obs-scene-control-fetch', (msg) => {
+      this.setState({
+        list: msg.users.join(','),
+        subs: msg.allSubs
+      });
+    });
+  }
+
+  handleFormChange(event) {
+    this.setState({
+      list: event.target.value
+    });
+  }
+
+  handleSubToggle() {
+    if(this.state.subs) { this.setState({ subs: false }) }
+    else { this.setState({ subs: true }) }
+  }
+
+  handleProducerUpdate() {
+    console.log('Producers.js | obs-scene-control-set | Users: ' + this.state.list.split(',') + ' , Subs: ' + this.state.subs);
+    this.props.socket.emit('obs-scene-control-set', {
+      users: this.state.list.split(','),
+      allSubs: this.state.subs
+    });
+  }
+
+  render() {
+    return (
+      <Card className="producers-panel">
         <Card.Header>Remote Producers</Card.Header>
         <Card.Body>
-            <Form>
-                <Form.Row>
-                    <Col>
-                        <FormControl placeholder="Producer Usernames (Comma Seperated)" />
-                    </Col>
-                </Form.Row>
-                <Form.Row className="producers-toggle">
-                <Col xs={8} className="producers-toggle-label">Allow for all Subscribers</Col>
-                <Col xs={4} className="producers-toggle-switch">
-                    <BootstrapSwitchButton
-                        checked={false}
-                        size="md"
-                        onstyle='primary'
-                        offstyle="secondary"
-                        onlabel="All Subs"
-                        offlabel="Listed"
-                    />
-                </Col>
-                </Form.Row>
-                <Form.Row>
-                    <Col>
-                        <Button className="producers-button" variant="primary" block>Update Producers</Button>
-                    </Col>
-                </Form.Row>
-            </Form>
+          <Form>
+            <Form.Row>
+              <Col>
+                <FormControl placeholder="Producer Usernames (Comma Seperated)" value={this.state.list} onChange={this.handleFormChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row className="producers-toggle">
+              <Col xs={8} className="producers-toggle-label">Allow for all Subscribers</Col>
+              <Col xs={4} className="producers-toggle-switch">
+                <BootstrapSwitchButton
+                  checked={this.state.subs}
+                  size="md"
+                  onstyle='primary'
+                  offstyle="secondary"
+                  onlabel="All Subs"
+                  offlabel="Listed"
+                  onChange={this.handleSubToggle}
+                />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Col>
+                <Button className="producers-button" variant="primary" onClick={this.handleProducerUpdate} block>Update Producers</Button>
+              </Col>
+            </Form.Row>
+          </Form>
         </Card.Body>
-    </Card>
-  );
+      </Card>
+    );
+  }
 }
 
 export default Producers;
