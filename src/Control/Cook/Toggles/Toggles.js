@@ -1,18 +1,21 @@
 // Import React packages.
 import { Component } from 'react';
 
+// Import react-bootstrap components.
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 
+// Include component stylings
 import './toggles.scss';
 
 class Toggles extends Component {
   constructor(props) {
     super(props);
 
+    // Handle state for the three toggles.
     this.state = {
       confetti: 'stop',
       notice: false,
@@ -25,6 +28,7 @@ class Toggles extends Component {
   }
 
   componentDidMount() {
+    // Listen for confetti state updates.
     this.props.socket.on('confetti-state', (msg) => {
       console.log('Toggles.js | confetti-stage | Confetti State: ' + msg.state);
       this.setState({
@@ -32,25 +36,28 @@ class Toggles extends Component {
       })
     });
 
+    // Listen for notice state updates.
     this.props.socket.on('notice-info', (msg) => {
       console.log('Toggles.js | notice-info | Notify State: ' + msg.show);
       if(msg.show === 'show') {this.setState({ notice: true })}
       if(msg.show === 'hide') {this.setState({ notice: false })}
     });
 
+    // Listen for banner state updates.
     this.props.socket.on('banner-fetch', (msg) => {
       console.log('Toggles.js | banner-fetch | Banner State: ' + msg.show);
-      this.setState({
-        banner: msg.show
-      })
+      this.setState({ banner: msg.show });
     });
   }
 
+  // Toggle the confetti.
   handleConfetti() {
     console.log('Toggles.js | confetti-toggle');
     this.props.socket.emit('confetti-toggle');
   }
 
+  // Toggle the notification allert.
+  // Users "Producer" for toggles created by control panel.
   handleNotify() {
     if(this.state.notice) {
       console.log('Toggles.js | notice-update | Notice State: hide');
@@ -64,6 +71,8 @@ class Toggles extends Component {
     }
   }
 
+  // Toggle the banner.
+  // TODO: Verify that this works correctly?
   handleBanner() {
     if(this.state.banner) {
       console.log('Toggles.js | banner-update | BAnner State: hide');
@@ -77,7 +86,11 @@ class Toggles extends Component {
     }
   }
 
+
   render() {
+    // Set the Confetti toggle button's state.
+    // Note, the toggle gets distabled while the confetti is in "stopping" mode.
+    // A change is made to the BootstrapSwitchButton's 'key' field to deal with a toggle button bug.
     let confettiChecked = false;
     if(this.state.confetti === 'start') { confettiChecked = true; }
     else if(this.state.confetti === 'stopping') { confettiChecked = false; }

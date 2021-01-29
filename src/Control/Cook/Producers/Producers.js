@@ -1,6 +1,7 @@
 // Import React packages.
 import { Component } from 'react';
 
+// Import react-bootstrap components.
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -8,12 +9,15 @@ import Button from 'react-bootstrap/Button';
 import FormControl from 'react-bootstrap/FormControl';
 import BootstrapSwitchButton from 'bootstrap-switch-button-react'
 
+// Include component stylings
 import './producers.scss';
 
 class Producers extends Component {
   constructor(props) {
     super(props);
 
+    // Comma seperated list of allowed producers.
+    // Toggle for if all subscribers can control the cameras.
     this.state = {
       list: '',
       subs: false
@@ -25,6 +29,7 @@ class Producers extends Component {
   }
 
   componentDidMount() {
+    // Get current state from the server when the component mounts.
     this.props.socket.on('obs-scene-control-fetch', (msg) => {
       this.setState({
         list: msg.users.join(','),
@@ -33,17 +38,20 @@ class Producers extends Component {
     });
   }
 
+  // Handle the form state.
   handleFormChange(event) {
     this.setState({
       list: event.target.value
     });
   }
 
+  // Handle the sub toggle state.
   handleSubToggle() {
     if(this.state.subs) { this.setState({ subs: false }) }
     else { this.setState({ subs: true }) }
   }
 
+  // Submit the user list. Turn it into an array first.
   handleProducerUpdate() {
     console.log('Producers.js | obs-scene-control-set | Users: ' + this.state.list.split(',') + ' , Subs: ' + this.state.subs);
     this.props.socket.emit('obs-scene-control-set', {

@@ -1,6 +1,7 @@
 // Import React packages.
 import { Component } from 'react';
 
+// Include React-Bootstrap components
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
@@ -9,8 +10,10 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Alert from 'react-bootstrap/Alert';
 
+// Include component stylings
 import './probe.scss';
 
+// Include icon images
 import stopIcon from '../../../Icons/stop.png';
 import refreshIcon from '../../../Icons/arrows_counterclockwise.png';
 import dontAwooIcon from '../../../Icons/dont_awoo.png';
@@ -21,13 +24,12 @@ class Probe extends Component {
 		super(props);
 
 		this.state = {
-			list: [],
-			temp: 'No Data',
-			target: 'No Data',
-			setTarget: 'No Data',
-			alarm: false,
-			alerted: false,
-			callbackStart: props.callbackStart
+			list: [], // List of avalible ports.
+			temp: 'No Data', // Current temperature.
+			target: 'No Data', // Target temperature.
+			setTarget: 'No Data', // The set target temperature.
+			alarm: false, // Is the alarm set?
+			alerted: false // Is the UI currently alerting the user?
     };
     
     this.start = this.start.bind(this);
@@ -42,10 +44,13 @@ class Probe extends Component {
 	}
 
 	componentDidMount() {
+    // Get the probe list when the component mounts.
 		this.props.socket.emit('probe-list', (list) => {
 			this.setState({	list: list });
 		});
 
+    // Get the latest temperature update from the server.
+    // (Triggers every second!)
 		this.props.socket.on('probe-temp', (msg) => {
 			this.setState({
 				temp: msg.temp,
@@ -55,6 +60,7 @@ class Probe extends Component {
 			});
 		});
 
+    // Update the probe alarm settings.
 		this.props.socket.on('probe-alert', (msg) => {
 			this.setState({
 				alarm: msg.alarm,
@@ -63,51 +69,60 @@ class Probe extends Component {
 		})
 	}
 
+  // Enable the temperature logger on the set probe.
 	start(path) {
 		console.log(path);
 		this.props.socket.emit('probe-start', {path: path});
 	}
 
+  // Disable the temperture logger.
 	stop() {
 		this.props.socket.emit('probe-stop');
 		this.setState({ temp: 'No Data' })
 	}
 
+  // Update the temperature logger probe list.
 	list() {
 		this.props.socket.emit('probe-list', (list) => {
 			this.setState({	list: list });
 		});
 	}
 
+  // Set the target temperature.
 	target(target) {
     this.props.socket.emit('probe-target', {target: target});
     this.setState({setTarget: target});
 	}
 
+  // Show the temperature panel.
 	showTemp() {
 		this.props.socket.emit('probe-display', {tempHidden: true});
 	}
 
+  // Hide the temperature panel.
 	hideTemp() {
 		this.props.socket.emit('probe-display', {tempHidden: false});
 	}
 
+  // Show the temperature chart.
 	showChart() {
 		this.props.socket.emit('probe-chart', {chartHidden: true});
 	}
 
+  // Hide the temperature chart.
 	hideChart() {
 		this.props.socket.emit('probe-chart', {chartHidden: false});
 	}
 
+  // Set the alarm settings.
 	setAlarm(alarmState) {
 		this.props.socket.emit('probe-alarm', {alarm: alarmState});
 		this.setState({alarm: alarmState});
 	}
 
   render() {
+    // Save the rendered the probe list.
     let portButtons = <Button className="probe-port-button" variant="primary" disabled>No Ports Available.</Button>
-
     if(this.state.list) {
       portButtons = this.state.list.slice(0).reverse().map(path => (
         <Button className="probe-port-button" variant="primary" key={path} onClick={(e) => { this.start(path) }}>{path}</Button>

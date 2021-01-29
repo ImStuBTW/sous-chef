@@ -1,5 +1,7 @@
 // Import React packages.
 import { Component } from 'react';
+
+// Styled-Components is required for styling ::before CSS for rotated backgrounds.
 import styled from 'styled-components';
 
 // Import react-bootstrap components.
@@ -10,9 +12,12 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 
+// Include component stylings
 import './image.scss';
 
-
+// Create a styled div component.
+// Props are passed from the Image component's render call.
+// Rotates the image size and background if needed.
 let Preview = styled.div`
   height: 100%;
   border-radius: 4px;
@@ -85,12 +90,11 @@ let Preview = styled.div`
   }}
 `;
 
-//       background-image: url(${props.serverUrl});
-
 class Images extends Component {
   constructor(props) {
     super(props);
     
+    // Store URL field, as well as any image updates from the server.
     this.state = {
       url: '',
       serverUrl: '',
@@ -103,14 +107,17 @@ class Images extends Component {
   }
   
   componentDidMount() {
+    // Update control panel to show latest image from server.
     this.props.socket.on('image-info', (msg) => {
       this.setState({
+        url: msg.url,
         serverUrl: msg.url,
         serverHidden: msg.hidden,
         serverRotate: msg.rotate
       })
     });
 
+    // When component mounts, get the latest image info from the server.
     this.props.socket.emit('image-fetch', (msg) => {
       console.log('Image.js | image-fetch | Recieving image: ');
       console.log(msg);
@@ -122,6 +129,7 @@ class Images extends Component {
     })
   }
 
+  // Submit current url field to server to display.
   handleImage(hidden, rotate) {
     this.props.socket.emit('image-update', {
       url: this.state.url,
@@ -130,12 +138,17 @@ class Images extends Component {
     });
   }
 
+  // Handle updates to URL field.
   handleFormChange(event) {
     this.setState({
       url: event.target.value
     });
   }
 
+  // Sends URL to display an image on the overlay.
+  // Supports the option to rotate the image if needed.
+  // (OBS's browser renderer does not support metadata image rotation.)
+  // Shows a small preview of the currently displayed image.
   render() {
     return (
       <Card className="image-panel">
@@ -174,7 +187,7 @@ class Images extends Component {
         </Card.Body>
       </Card>
     )
-  } Yeah;
+  };
 }
 
 export default Images;
