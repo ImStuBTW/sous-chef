@@ -16,7 +16,7 @@ class Beer extends Component {
   constructor(props) {
     super(props);
 
-    // Handle state for the three toggles.
+    // Handle form inputs and toggle state.
     this.state = {
       beer: '',
       brewery: '',
@@ -32,7 +32,7 @@ class Beer extends Component {
   }
 
   componentDidMount() {
-    // Listen for beer updates.
+    // Listen for beer info updates.
     this.props.socket.on('drink-fetch', (msg) => {
       console.log('Beer.js | drink-fetch | Drink: ' + msg.beer + ' By: ' + msg.brewery);
       this.setState({
@@ -93,7 +93,7 @@ class Beer extends Component {
 
     return (
       <Card className="beer-panel">
-        <Card.Header>Recipe</Card.Header>
+        <Card.Header>Drink</Card.Header>
         <Card.Body>
           <Form>
             <Form.Row>
@@ -113,10 +113,10 @@ class Beer extends Component {
             </Form.Row>
             <Form.Row className="beer-buttons">
               <Col>
-                <Button variant="primary" onClick={() => { this.handleSubmit(true) }} block>Show</Button>
+                <Button variant="primary" onClick={() => { this.handleSubmit(false) }} block>Show</Button>
               </Col>
               <Col>
-                <Button variant="secondary" onClick={() => { this.handleSubmit(false) }} block>Hide</Button>
+                <Button variant="secondary" onClick={() => { this.handleSubmit(true) }} block>Hide</Button>
               </Col>
               <Col className="producers-toggle-switch">
                 <BootstrapSwitchButton

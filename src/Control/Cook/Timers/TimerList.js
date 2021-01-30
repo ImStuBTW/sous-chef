@@ -26,7 +26,7 @@ class ActiveTimers extends Component {
   componentDidMount() {
     // Listen for new timers. Update state to include timer.
     this.props.socket.on('timer-added', (msg) => {
-      console.log('ActiveTimers.js | timer-added:');
+      console.log('TimerList.js | timer-added:');
       console.log(msg);
       this.setState({timers: [...this.state.timers, msg]})
     });
@@ -34,7 +34,7 @@ class ActiveTimers extends Component {
     // Listen for expired timers.
     // Update timers list with the timer that has reached 0 in case UI has not caught up yet.
     this.props.socket.on('timer-expired', (msg) => {
-      console.log('ActiveTimers.js | timer-expired:');
+      console.log('Timerlist.js | timer-expired:');
       console.log(msg);
       this.setState({
         timers: this.state.timers.map((timer) => {
@@ -51,7 +51,7 @@ class ActiveTimers extends Component {
     // Listen for restarted timers.
     // Replace current timer time with restarted value from server.
     this.props.socket.on('timer-restart', (msg) => {
-      console.log('ActiveTimers.js | timer-restart:');
+      console.log('TimerList.js | timer-restart:');
       console.log(msg);
       this.setState({
         timers: this.state.timers.map((timer) => {
@@ -68,7 +68,7 @@ class ActiveTimers extends Component {
     // Listen for deleted timers.
     // Remove deleted timers from list.
     this.props.socket.on('timer-deleted', (msg) => {
-      console.log('ActiveTimers.js | timer-deleted:');
+      console.log('TimerList.js | timer-deleted:');
       console.log(msg);
       this.setState({timers: this.state.timers.filter((timer) => {
         return timer.id !== msg.id;
@@ -78,15 +78,17 @@ class ActiveTimers extends Component {
     // Listen for all timers expired. (Fallback in case timer list has gotten out of date.)
     // If 'timer-empty' is triggered, set timer list to empty array.
     this.props.socket.on('timer-empty', (msg) => {
-      console.log('ActiveTimers.js | timer-empty:');
+      console.log('TimerList.js | timer-empty:');
       console.log(msg);
       this.setState({ timers: emptyTimers });
     });
 
     // Once the listeners are set up, get the current status.
     this.props.socket.emit('timer-fetch', (msg) => {
-      console.log('ActiveTimers.js | timer-fetch:');
-      console.log(msg);
+      if(msg.length !== 0) {
+        console.log('TimerList.js | timer-fetch:');
+        console.log(msg);
+      }
       this.setState({ timers: msg });
     });
   }

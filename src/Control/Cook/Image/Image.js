@@ -22,7 +22,6 @@ let Preview = styled.div`
   height: 100%;
   border-radius: 4px;
   ${(props) => {
-    console.log(props);
     if(props.isHidden) {
       return `border: 2px dashed #6c757d`;
     }
@@ -119,8 +118,10 @@ class Images extends Component {
 
     // When component mounts, get the latest image info from the server.
     this.props.socket.emit('image-fetch', (msg) => {
-      console.log('Image.js | image-fetch | Recieving image: ');
-      console.log(msg);
+      if(msg.url !== '' && msg.hidden !== true) {
+        console.log('Image.js | image-fetch | Recieving image: ');
+        console.log(msg);
+      }
         this.setState({
           serverUrl: msg.url,
           serverHidden: msg.hidden,
