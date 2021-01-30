@@ -18,11 +18,13 @@ class Toggles extends Component {
     // Handle state for the three toggles.
     this.state = {
       confetti: 'stop',
+      bubbles: 'stop',
       notice: false,
       banner: false
     }
 
     this.handleConfetti = this.handleConfetti.bind(this);
+    this.handleBubbles = this.handleBubbles.bind(this);
     this.handleNotify = this.handleNotify.bind(this);
     this.handleBanner = this.handleBanner.bind(this);
   }
@@ -33,6 +35,14 @@ class Toggles extends Component {
       console.log('Toggles.js | confetti-stage | Confetti State: ' + msg.state);
       this.setState({
         confetti: msg.state
+      })
+    });
+
+    // Listen for bubbles state updates.
+    this.props.socket.on('bubbles-state', (msg) => {
+      console.log('Toggles.js | bubbles-stage | Bubble State: ' + msg.state);
+      this.setState({
+        bubbles: msg.state
       })
     });
 
@@ -54,6 +64,12 @@ class Toggles extends Component {
   handleConfetti() {
     console.log('Toggles.js | confetti-toggle');
     this.props.socket.emit('confetti-toggle');
+  }
+
+  // Toggle the bubbles.
+  handleBubbles() {
+    console.log('Toggles.js | bubbles-toggle');
+    this.props.socket.emit('bubbles-toggle');
   }
 
   // Toggle the notification allert.
@@ -96,6 +112,14 @@ class Toggles extends Component {
     else if(this.state.confetti === 'stopping') { confettiChecked = false; }
     else if(this.state.confetti === 'stop') { confettiChecked = false; }
 
+    // Set the bubbles toggle button's state.
+    // Note, the toggle gets distabled while the bubbles is in "stopping" mode.
+    // A change is made to the BootstrapSwitchButton's 'key' field to deal with a toggle button bug.
+    let bubblesChecked = false;
+    if(this.state.bubbles === 'start') { bubblesChecked = true; }
+    else if(this.state.bubbles === 'stopping') { bubblesChecked = false; }
+    else if(this.state.bubbles === 'stop') { bubblesChecked = false; }
+
     return (
       <Card className="timers-list">
         <Card.Header>Toggles</Card.Header>
@@ -112,6 +136,22 @@ class Toggles extends Component {
                   disabled={(this.state.confetti === 'stopping') ? true : false}
                   onChange={this.handleConfetti}
                   key={(this.state.confetti === 'stopping') ? true : false}
+                />
+              </Col>
+            </Form.Row>
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <Form.Row>
+              <Col xs={8} className="toggle-label">Bubbles</Col>
+              <Col xs={4} className="toggle-switch">
+                <BootstrapSwitchButton
+                  checked={bubblesChecked}
+                  size="md"
+                  offstyle="secondary"
+                  onstyle='primary'
+                  disabled={(this.state.bubbles === 'stopping') ? true : false}
+                  onChange={this.handleBubbles}
+                  key={(this.state.bubbles === 'stopping') ? true : false}
                 />
               </Col>
             </Form.Row>
