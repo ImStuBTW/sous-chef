@@ -145,14 +145,16 @@ class Toggles extends Component {
               <Col xs={8} className="toggle-label">Bubbles</Col>
               <Col xs={4} className="toggle-switch">
                 <BootstrapSwitchButton
-                  checked={bubblesChecked}
-                  size="md"
-                  offstyle="secondary"
-                  onstyle='primary'
-                  disabled={(this.state.bubbles === 'stopping') ? true : false}
-                  onChange={this.handleBubbles}
-                  key={(this.state.bubbles === 'stopping') ? true : false}
-                />
+                    checked={bubblesChecked}
+                    size="md"
+                    onstyle='primary'
+                    offstyle="secondary"
+                    onlabel="On"
+                    offlabel="Off"
+                    disabled={(this.state.bubbles === 'stopping') ? true : false}
+                    onChange={this.handleBubbles}
+                    key={(this.state.bubbles === 'stopping') ? true : false}
+                  />
               </Col>
             </Form.Row>
           </ListGroup.Item>
