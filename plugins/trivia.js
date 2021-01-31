@@ -77,9 +77,9 @@ module.exports = function(io, clientSocket) {
             // Wait 5 seconds before posting the next question.
             setTimeout(goToNextQuestion, 3000);
 
-            console.log(`triva.js | Current standings: ${JSON.stringify(triviaInfo.contestants)}`);
+            console.log(`trivia.js | Current standings: ${JSON.stringify(triviaInfo.contestants)}`);
         } else {
-            console.log(`triva.js | Time remaining for current question: ${timeRemaining} seconds`);
+            console.log(`trivia.js | Time remaining for current question: ${timeRemaining} seconds`);
         }
 
         timer.repeatTimer();
@@ -133,7 +133,7 @@ module.exports = function(io, clientSocket) {
 
                 contestant.points += points;
                 contestant.answered.push(triviaInfo.currentQuestion);
-                console.log(`triva.js | ${msg.user} earned ${points} points on this question.`);
+                console.log(`trivia.js | ${msg.user} earned ${points} points on this question.`);
                 saveData();    
             }
 
@@ -144,13 +144,13 @@ module.exports = function(io, clientSocket) {
     io.on('connection', (socket) => {
         // FETCH QUESTIONS
         socket.on('trivia-fetch', (fn) => {
-            console.log(`triva.js | triva-fetch | Sending current questions: ${JSON.stringify(triviaInfo)}`);
+            console.log(`trivia.js | trivia-fetch | Sending current questions: ${JSON.stringify(triviaInfo)}`);
             fn(triviaInfo);
         });
 
         // UPDATE QUESTIONS
         socket.on('trivia-update', function(msg) {
-            console.log(`triva.js | triva-update | Setting trivia metadata: interval: ${msg.interval}, enabled: ${msg.enabled}`);
+            console.log(`trivia.js | trivia-update | Setting trivia metadata: interval: ${msg.interval}, enabled: ${msg.enabled}`);
             triviaInfo.enabled = msg.enabled;
             triviaInfo.interval = msg.interval;
 

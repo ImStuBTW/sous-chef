@@ -10,7 +10,7 @@ import Col from 'react-bootstrap/Col';
 import Recipe from './Recipe/Recipe';
 import Beer from './Beer/Beer';
 import Reminders from './Reminders/Reminders';
-import Triva from './Triva/Triva';
+import Trivia from './Trivia/Trivia';
 
 class Prep extends Component {
   render() {
@@ -31,7 +31,7 @@ class Prep extends Component {
         </Row>
         <Row>
           <Col>
-            <Triva socket={this.props.socket} />
+            <Trivia socket={this.props.socket} />
           </Col>
         </Row>
       </Container>
