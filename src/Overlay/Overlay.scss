@@ -3,25 +3,25 @@
 /****************/
 
 /* Custom fonts with a relative path. */
-/*@font-face {
+@font-face {
     font-family: 'ChevyRay - Babyblocks';
-    src: local('ChevyRay - Babyblocks'), url(./fonts/ChevyRay\ -\ Babyblocks.ttf) format('truetype');
+    src: local('ChevyRay - Babyblocks'), url('./fonts/ChevyRay\ -\ Babyblocks.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'ChevyRay - Little League';
-    src: local('ChevyRay - Little League'), url(./fonts/ChevyRay\ -\ Little\ League.ttf) format('truetype');
+    src: local('ChevyRay - Little League'), url('./fonts/ChevyRay\ -\ Little\ League.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'ChevyRay - Oeuf';
-    src: local('ChevyRay - Oeuf'), url(./fonts/ChevyRay\ -\ Oeuf.ttf) format('truetype');
+    src: local('ChevyRay - Oeuf'), url('./fonts/ChevyRay\ -\ Oeuf.ttf') format('truetype');
 }
 
 @font-face {
     font-family: 'ChevyRay - Skullboy Mono';
-    src: local('ChevyRay - Skullboy'), url(./fonts/ChevyRay\ \-\ Skullboy\ Mono.ttf) format('truetype');
-}*/
+    src: local('ChevyRay - Skullboy'), url('./fonts/ChevyRay\ \-\ Skullboy\ Mono.ttf') format('truetype');
+}
 
 /*******************/
 /* Main App Styles */

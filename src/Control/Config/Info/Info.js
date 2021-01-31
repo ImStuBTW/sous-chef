@@ -59,19 +59,19 @@ class Info extends Component {
             <ListGroup.Item>
               <Form.Row>
                 <Col xs={6} className="info-page">Overlay (Bonjour)</Col>
-                <Col xs={6} className="info-url"><a target="_blank" rel="noreferrer" href={bonjour + 'overlay'}>{bonjour + '/overlay'}</a></Col>
+                <Col xs={6} className="info-url"><a target="_blank" rel="noreferrer" href={bonjour + 'overlay'}>{bonjour + 'overlay'}</a></Col>
               </Form.Row>
             </ListGroup.Item>
             <ListGroup.Item>
               <Form.Row>
                 <Col xs={6} className="info-page">Overlay (LAN)</Col>
-                <Col xs={6} className="info-url"><a target="_blank" rel="noreferrer" href={ipAddr + 'overlay'}>{ipAddr + '/overlay'}</a></Col>
+                <Col xs={6} className="info-url"><a target="_blank" rel="noreferrer" href={ipAddr + 'overlay'}>{ipAddr + 'overlay'}</a></Col>
               </Form.Row>
             </ListGroup.Item>
             <ListGroup.Item>
               <Form.Row>
                 <Col xs={6} className="info-page">Overlay (Localhost)</Col>
-                <Col xs={6} className="info-url"><a target="_blank" rel="noreferrer" href={localHost + 'overlay'}>{localHost + '/overlay'}</a></Col>
+                <Col xs={6} className="info-url"><a target="_blank" rel="noreferrer" href={localHost + 'overlay'}>{localHost + 'overlay'}</a></Col>
               </Form.Row>
             </ListGroup.Item>
           </ListGroup>

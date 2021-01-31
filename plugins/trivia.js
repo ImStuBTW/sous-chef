@@ -1,4 +1,4 @@
-const StreamTimer = require('../utils/StreamTimer.js'),
+const StreamTimer = require('./utils/StreamTimer.js'),
       fs = require('fs');
 
 module.exports = function(io, clientSocket) {

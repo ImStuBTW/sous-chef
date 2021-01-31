@@ -1,5 +1,5 @@
-const StreamTimer = require('../utils/StreamTimer.js');
-const TimerUtil = require('../utils/timerutil.js');
+const StreamTimer = require('./utils/StreamTimer.js');
+const TimerUtil = require('./utils/timerutil.js');
 
 module.exports = function(io) {
     let streamTimers = [];

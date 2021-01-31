@@ -1,4 +1,4 @@
-const StreamTimer = require('../utils/StreamTimer.js'),
+const StreamTimer = require('./utils/StreamTimer.js'),
       fs = require('fs');
 
 // Require Electron-Store to store message settings between settings.
