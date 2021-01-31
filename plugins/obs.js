@@ -139,8 +139,8 @@ module.exports = function(io, clientSocket) {
         });
 
         // ON header-init: Send state to navbar.
-        socket.on('header-init', () => {
-            console.log('obs.js | header-init');
+        socket.on('obs-fetch', () => {
+            console.log('obs.js | obs-fetch');
             io.emit('obs-status', obsConnected);
         })
         

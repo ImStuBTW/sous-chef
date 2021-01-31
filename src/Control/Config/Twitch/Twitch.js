@@ -62,16 +62,20 @@ class Twitch extends Component {
           <Form>
             <Form.Row>
               <Col>
-                <Alert variant="success" className="twitch-alert">Twitch Authenticated Successfully.</Alert>
+                {(this.state.status) ?
+                <Alert variant="success" className="twitch-alert">Twitch Bot Authenticated Successfully.</Alert>
+                :
+                <Alert variant="success" className="twitch-warning">Twitch Bot Not Authenticated.</Alert>
+                }
               </Col>
             </Form.Row>
           </Form>
           <Form.Row className="twitch-buttons">
             <Col>
-              <Button variant="primary" block>Connect Bot to Twitch</Button>
+              <Button variant="primary" onClick={this.handleBotConnect} block>Connect Bot to Twitch</Button>
             </Col>
             <Col>
-              <Button variant="primary" block>Broadcaster Login</Button>
+              <Button variant="primary" onClick={this.handleLoginConnect} block>Broadcaster Login</Button>
             </Col>
           </Form.Row>
         </Card.Body>
