@@ -1,7 +1,7 @@
  // Use ip.address() to get current IP address.
 const ip = require('ip');
 
-module.exports = function(io, port) {
+module.exports = function(io, frontendPort) {
     // Socket Connections
     io.on('connection', (socket) => {
         // ON howdy: Test socket.
@@ -13,6 +13,11 @@ module.exports = function(io, port) {
         socket.on('init', () => {
             console.log('utility.js | init');
             socket.emit('ip', ip.address(), () => console.log('ip emitted'));
+        })
+
+        socket.on('utility-fetch', () => {
+            console.log('utlity.js | utility-ip');
+            socket.emit('utility-ip', {ip: ip.address(), port: frontendPort})
         })
     });
 };

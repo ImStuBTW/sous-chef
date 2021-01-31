@@ -34,6 +34,7 @@ require('./plugins/probe.js')(io); // Show temperature probe.
 require('./plugins/recipe.js')(io); // Show recipe info.
 require('./plugins/timer.js')(io); // Handle cooking timers.
 require('./plugins/tweet.js')(io); // Show Twitter embeds.
+require('./plugins/utility.js')(io, frontendPort); // Show Twitter embeds.
 
 // Require plugins that need the inter-app client io socket.
 require('./plugins/bubbles.js')(io, clientSocket); // Show drink bubble overlay.
