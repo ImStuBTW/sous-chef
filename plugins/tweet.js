@@ -26,24 +26,30 @@ module.exports = function(io) {
 
             let tempInfo = {embed: '', tweet: '', hidden: true};
 
-            if(msg.hidden === true || msg.embed === '') {
+            if(msg.embed === '') {
                 tweetInfo = tempInfo;
+                console.log(tweetInfo);
+                io.emit('tweet-info', tweetInfo);
+            }
+            else if(msg.hidden === true) {
+                tweetInfo = {embed: msg.embed, tweet: msg.tweet, hidden: msg.hidden};
                 console.log(tweetInfo);
                 io.emit('tweet-info', tweetInfo);
             }
             else if(msg.embed !== '') {
                 if(msg.embed.length > 4 && msg.embed.slice(0,4) === 'http') {
                     const tweetId = msg.embed.split('status/')[1].split('/')[0];
-                    client.get('statuses/show/' + tweetId, function(error, tweet, response) {
+                    client.get('statuses/show/' + tweetId, {"tweet_mode": "extended"}, function(error, tweet, response) {
                         console.log('tweet.js | tweet-update | Tweet fetched via URL.');
                         tempInfo = {embed: msg.embed, hidden: msg.hidden, tweet: tweet};
                         tweetInfo = tempInfo;
                         console.log(tweetInfo);
+                        if(tweetInfo.tweet.extended_entities) { console.log(tweetInfo.tweet.extended_entities); }
                         io.emit('tweet-info', tweetInfo);
                      });
                 }
                 else {
-                    client.get('statuses/show/' + msg.embed, function(error, tweet, response) {
+                    client.get('statuses/show/' + msg.embed, {"tweet_mode": "extended"}, function(error, tweet, response) {
                         console.log('tweet.js | tweet-update | Tweet fetched via ID.');
                         tempInfo = {embed: msg.embed, hidden: msg.hidden, tweet: tweet};
                         tweetInfo = tempInfo;

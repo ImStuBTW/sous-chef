@@ -68,7 +68,7 @@ class Twitter extends Component {
       tweetPreview = <Form.Row className="tweet-preview-col">
                           <Col>
                               <div className="tweet-preview">
-                                  <Tweet data={this.state.tweet} />
+                                  <Tweet data={this.state.tweet} autoPlay={true} />
                               </div>
                           </Col>
                      </Form.Row>

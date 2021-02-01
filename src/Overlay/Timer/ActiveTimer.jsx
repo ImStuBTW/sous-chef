@@ -3,13 +3,13 @@ let React = require('react');
 let Panel = require("../Panel/Panel.jsx");
 
 class ActiveTimer extends React.Component {    
-    shouldComponentUpdate(nextProps, nextState) {
-        if (this.props.timer.seconds === nextProps.timer.seconds) {
-            return false;
-        }
+	shouldComponentUpdate(nextProps, nextState) {
+			if (this.props.timer.seconds === nextProps.timer.seconds) {
+					return false;
+			}
 
-        return true;
-    }
+			return true;
+	}
 
     // Show the timer details in a panel component.
 	render() {

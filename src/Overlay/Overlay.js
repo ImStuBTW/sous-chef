@@ -2,7 +2,6 @@
 // Import React packages.
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { TwitterTweetEmbed } from 'react-twitter-embed';
 import Sound from 'react-sound';
 import { Chart } from 'react-chartjs-2';
 
@@ -18,6 +17,7 @@ import Timer from './Timer/ActiveTimer';
 import Panel from './Panel/Panel';
 import TempPanel from './Panel/TempPanel';
 import ImagePanel from './Panel/ImagePanel';
+import TweetPanel from './Panel/TweetPanel';
 import ConfettiWrapper from './Wrapper/ConfettiWrapper';
 import BubbleWrapper from './Wrapper/BubbleWrapper';
 import ImageSlide from './Panel/ImageSlide';
@@ -287,14 +287,10 @@ class Overlay extends React.Component {
         unmountPanel(elementId);
 
         if (!msg.hidden) {
-            let props = {
-                animate: true,
-                alignment: 'left',
-                contentClass: 'panel-content-nomargin'
-            };
-
-            mountCustomPanel(elementId, props,
-                (<TwitterTweetEmbed tweetId={msg.embed} />));
+            ReactDOM.render(
+                React.createElement(TweetPanel, {url: msg.url, tweet: msg.tweet}),
+                document.getElementById(elementId)
+            );
         }
     }
 
@@ -441,6 +437,8 @@ class Overlay extends React.Component {
     });
 
     socket.emit('timer-fetch', (timers) => {
+        // console.log('timers: ');
+        // console.log(timers);
         ReactDOM.render(
             React.createElement(TimerContainer, {timers: timers, socket: socket, component: Timer, showNone: false}),
             document.getElementById('timers')
