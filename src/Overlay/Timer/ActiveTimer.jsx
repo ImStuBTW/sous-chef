@@ -1,6 +1,8 @@
+import whistleMp3 from '../sounds/whistle.mp3';
+
 let React = require('react');
 
-let Panel = require("../Panel/Panel.jsx");
+let Panel = require("../Panel/Panel.jsx").default;
 
 class ActiveTimer extends React.Component {    
 	shouldComponentUpdate(nextProps, nextState) {
@@ -32,7 +34,7 @@ class ActiveTimer extends React.Component {
             console.log('seconds equals 0');
 			panelProps.content = 'DONE';
             panelProps.wrapperClass = 'panel-wrapper-timer-expired';
-            panelProps.sound = 'http://localhost:3000/assets/whistle.mp3';
+            panelProps.sound = whistleMp3;
 		}
 		else {
 			child = (<span>{minutes}<span className="panel-timercolon">:</span>{paddedSeconds}</span>);

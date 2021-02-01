@@ -1,7 +1,7 @@
 import React from 'react';
 
-import StreamTimer from './StreamTimer';
-import TimerUtil from './timerutil.js';
+let StreamTimer = require("./StreamTimer.js").default;
+let TimerUtil = require('./timerutil.js').default;
 
 class TimerControlContainer extends React.Component {
     constructor(props) {
@@ -82,18 +82,23 @@ class TimerControlContainer extends React.Component {
         this.state = {
             timers: this.streamTimers.map((timer) => {return TimerUtil.extractTimerInfo(timer)})
         };
+
+        this.updateSeconds = this.updateSeconds.bind(this);
+        this.createNewTimer = this.createNewTimer.bind(this);
+        this.deleteTimer = this.deleteTimer.bind(this);
+        this.repeatTimer = this.repeatTimer.bind(this);
     }
+
+    // Callback that updates the timer state every second.
+    updateSeconds(id, name, seconds, event) {
+        let timers = this.streamTimers.map(TimerUtil.extractTimerInfo);
+
+        this.setState({timers: timers});
+    };
 
     // Create a new timer for this container.
     createNewTimer(msg) {
-        // Callback that updates the timer state every second.
-        function updateSeconds(id, name, seconds, event) {
-            let timers = this.streamTimers.map(TimerUtil.extractTimerInfo);
-
-            this.setState({timers: timers});
-        };
-        
-        return new StreamTimer(msg.id, msg.name, msg.seconds, updateSeconds);
+        return new StreamTimer(msg.id, msg.name, msg.seconds, this.updateSeconds);
     }
 
     // Callback to trigger timer deletion.

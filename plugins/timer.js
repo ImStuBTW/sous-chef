@@ -54,12 +54,12 @@ module.exports = function(io) {
 
             let index = TimerUtil.getTimerIndexWithId(streamTimers, msg.id);
             if (index >= 0) {
-                streamTimers[index].repeatTimer();
                 io.emit('timer-restart', {
                     id: msg.id,
                     name: msg.name,
                     seconds: TimerUtil.extractTimerInfo(streamTimers[index]).seconds
                 });
+                streamTimers[index].repeatTimer();
             }
         });
 
