@@ -41,8 +41,9 @@ let Preview = styled.div`
           content: "";
           position: absolute;
           width: 200%;
-          height: 100%;
+          height: 200%;
           left: -50%;
+          top: -50%;
           background-image: url('${props.url}');
           background-color: #6c757d;
           background-size: cover;
@@ -76,8 +77,9 @@ let Preview = styled.div`
         content: "";
         position: absolute;
         width: 200%;
-        height: 100%;
+        height: 200%;
         left: -50%;
+        top: -50%;
         background-image: url('${props.url}');
         background-color: #6c757d;
         background-size: cover;
