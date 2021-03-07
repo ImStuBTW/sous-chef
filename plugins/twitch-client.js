@@ -1,7 +1,7 @@
 // Require Twitch client and client ID config file.
 const TwitchClient = require('twitch').default;
 const ChatClient = require('twitch-chat-client').default;
-const twitchKeys = require('../.twitch-keys');
+const twitchKeys = require('../.twitch-key');
 
 // Require Electron BrowserWindow.
 const {BrowserWindow} = require('electron');

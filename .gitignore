@@ -23,8 +23,8 @@ yarn-debug.log*
 yarn-error.log*
 
 /out
-.twitch-keys.json
-.twitter-keys.json
+.twitch-key.json
+.twitter-key.json
 currentMessages.json
 keyBindings.json
 trivia.json
