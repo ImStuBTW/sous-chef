@@ -64,6 +64,10 @@
   "optionalDependencies": {
     "nowplaying-node": "0.1.3"
   },
+  "asarUnpack": [
+    "node_modules/itunes-bridge/wscript",
+    "node_modules/itunes-bridge/jxa"
+  ],
   "scripts": {
     "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
     "electron": "wait-on tcp:3000 && electron-forge start",
