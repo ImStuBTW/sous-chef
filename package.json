@@ -69,7 +69,7 @@
     "node_modules/itunes-bridge/jxa"
   ],
   "scripts": {
-    "dev": "concurrently -k \"BROWSER=none npm start\" \"npm:electron\"",
+    "dev": "concurrently -k \"cross-env BROWSER=none npm start\" \"npm:electron\"",
     "electron": "wait-on tcp:3000 && electron-forge start",
     "start": "cross-env PORT=3000 react-scripts start",
     "build": "cross-env PORT=80 react-scripts build",
