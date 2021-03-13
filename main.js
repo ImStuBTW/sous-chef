@@ -46,7 +46,7 @@ require('./plugins/twitch.js')(io, clientSocket); // Handle Twitch integration.
 
 // Actviate iTunes media plugin based on OS.
 if (process.platform === 'darwin') { require('./plugins/nowplaying-mac.js')(io); }
-if (process.platform === 'win32') { require('./plugins/itunes-win.js')(io); }
+if (process.platform === 'win32') { require('./plugins/nowplaying-win.js')(io); }
 
 // Advertise over Bonjour/Zeroconf/MDNS that the app can be accessed at http://souschef.local
 var bonjour = require('bonjour')();
