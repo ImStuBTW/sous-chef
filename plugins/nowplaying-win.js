@@ -1,5 +1,4 @@
 const itunes = require("itunes-nowplaying-win");
-const tempfile = require('tempfile');
 const fs = require('fs');
 const { app } = require('electron');
 

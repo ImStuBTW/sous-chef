@@ -57,7 +57,7 @@ class Reminders extends Component {
     // When component mounts, get current state.
     this.props.socket.emit('message-fetch', (msg) => {
       console.log('Reminders.js | message-fetch | Reminders Enabled: ' + msg.enabled + ' Interval: ' + msg.interval);
-      if(msg.messages) { console.log(msg.messages); }
+      //if(msg.messages) { console.log(msg.messages); }
       this.setState({
         messages: msg.messages,
         interval: msg.interval,
