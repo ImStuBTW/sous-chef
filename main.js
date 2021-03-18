@@ -82,6 +82,9 @@ function createWindow() {
     }
   });
 
+  // Ditch the menu bar if on Windows.
+  if (process.platform === 'win32') { mainWindow.removeMenu(); }
+
   // Load the Create-React-App localhost if in dev mode,
   // otherwise, load from Express app.
   mainWindow.loadURL("http://localhost:" + frontendPort);

@@ -1,4 +1,7 @@
 const itunes = require("itunes-nowplaying-win");
+const tempfile = require('tempfile');
+const fs = require('fs');
+const { app } = require('electron');
 
 module.exports = function(io) {
   // Store current track data
@@ -15,57 +18,73 @@ module.exports = function(io) {
     io.emit('itunes-playing', {
         track: track.track,
         artist: track.artist,
-        album: track.album,
+        album: '',
         artwork: track.artwork
     });
   }
 
   function getNowPlaying() {
-    itunes.getNowPlaying((err, track) => {
+    // Note that iTunes.getNowplaying doesn't have a capital P.
+    itunes.getNowplaying((err, track) => {
       if(err) { console.log('nowplaying-win.js | Error: ' + err); }
 
-      console.log('nowplaying-win.js | track: ');
-      console.log(track);
-
-      // If able to find album art, save it to a temp file. (Package limitation.)
-      if(track.artworkCount > 0) {
-        // Create the tempfile name.
-        let tempfile = 'temp.' + track.artworkFormat;
-        console.log('nowplaying-win.js | tempfile: ' + tempfile);
-
-        // Save artwork to tempfile.
-        itunes.saveNowplayingArtworkToFile(tempfile, (err) => {
-          if(err) { console.log('nowplaying-win.js | Error: ' + err); }
-
-          // Read file's base 64 into variable.
-          const image = fs.readFileSync(tempfile, {encoding: 'base64'});
-
-          /*// Update the currentTrack;
-          currentTrack = {
-            track: response.name,
-            artist: response.artist,
-            album: response.album.name,
-            artwork: image
-          };*/
-        
-          // Let the overlay know the track changed.
-          emitNowPlaying(currentTrack);
-        });
-
+      // Make sure iTunes is responding.
+      if(track) {
+        console.log('nowplaying-win.js | No track currently playing.');
+        currentTrack = {
+          track: '',
+          artist: '',
+          album: '',
+          artwork: ''
+        }
       }
       else {
-        console.log("nowplaying-win.js | Couldn't find an album art.");
+        // If the new track is the same as the old track, don't bother doing anything else.
+        if(track.name !== currentTrack.track) {
 
-        /*// Update the currentTrack;
-        currentTrack = {
-          track: response.name,
-          artist: response.artist,
-          album: response.album.name,
-          artwork: ''
-        };*/
-  
-        // Let the overlay know the track changed.
-        emitNowPlaying(currentTrack);
+          // If able to find album art, save it to a temp file. (Package limitation.)
+          if(track.artworkCount > 0) {
+            // Create the tempfile name.
+            const tmpArtworkPath = app.getPath("temp") + "\\temp." + track.artworkFormat;
+            console.log('nowplaying-win.js | tempfile: ' + tmpArtworkPath);
+
+            // Save artwork to tempfile.
+            itunes.saveNowplayingArtworkToFile(tmpArtworkPath, (err) => {
+              if(err) { console.log('nowplaying-win.js | Error: ' + err); }
+              console.log(`save artwork to: ${tmpArtworkPath}`);
+              
+              // Read file's base 64 into variable.
+              const image = fs.readFileSync(tmpArtworkPath, {encoding: 'base64'});
+
+              // Update the currentTrack;
+              currentTrack = {
+                track: track.name,
+                artist: track.artist,
+                album: '',
+                artwork: image
+              };
+            
+              // Let the overlay know the track changed.
+              emitNowPlaying(currentTrack);
+            });
+
+
+          }
+          else {
+            console.log("nowplaying-win.js | Couldn't find an album art.");
+
+            // Update the currentTrack;
+            currentTrack = {
+              track: track.name,
+              artist: track.artist,
+              album: '',
+              artwork: ''
+            };
+      
+            // Let the overlay know the track changed.
+            emitNowPlaying(currentTrack);
+          }
+        }
       }
     })
 
