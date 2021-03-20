@@ -25,10 +25,10 @@ module.exports = function(io) {
   function getNowPlaying() {
     // Note that iTunes.getNowplaying doesn't have a capital P.
     itunes.getNowplaying((err, track) => {
+      // Make sure we actually connected to iTunes.
       if(err) { console.log('nowplaying-win.js | Error: ' + err); }
-
-      // Make sure iTunes is responding.
-      if(track) {
+      // Make sure we actually have a song from iTunes.
+      else if(!track && currentTrack.track !== '') {
         console.log('nowplaying-win.js | No track currently playing.');
         currentTrack = {
           track: '',

@@ -57,7 +57,7 @@ bonjour.publish({ name: 'Sous Chef', host: bonjourUrl, type: 'http', port: 80})
 let installExtension, REACT_DEVELOPER_TOOLS;
 
 // Load React Dev Tools if running in dev mode.
-if(isDev) {
+if(isDev && process.platform !== 'win32') {
   const devTools = require("electron-devtools-installer");
   installExtension = devTools.default;
   REACT_DEVELOPER_TOOLS = devTools.REACT_DEVELOPER_TOOLS;
@@ -109,7 +109,7 @@ function createWindow() {
 app.on('ready', () => {
   createWindow();
 
-  if(isDev) {
+  if(isDev && process.platform !== 'win32') {
     installExtension(REACT_DEVELOPER_TOOLS)
       .then(name => console.log(`Added Extension:  ${name}`))
       .catch(error => console.log(`An error occurred: , ${error}`));
