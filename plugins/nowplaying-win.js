@@ -1,96 +1,48 @@
-const itunes = require("itunes-nowplaying-win");
-const fs = require('fs');
-const { app } = require('electron');
+const np = require("nowplaying-node"),
+      fs = require('fs');
+
+const NowPlaying = np.NowPlaying,
+      PlayerName = np.PlayerName;
+
+let trackPath;
 
 module.exports = function(io) {
-  // Store current track data
-  let currentTrack = {
-    track: '',
-    artist: '',
-    album: '',
-    artwork: ''
-  };
+    // iTunes connection & event handling
+    function fileToBase64(filePath) {
+        let cover = fs.readFileSync(filePath, {encoding: 'base64'});
+        fs.unlinkSync(filePath);
+        return cover;
+    }
 
-  // Send new track to overlay.
-  function emitNowPlaying(track) {
-    console.log(`nowplaying-win.js | Playing: ${track.track} by ${track.artist}`);
-    io.emit('itunes-playing', {
-        track: track.track,
-        artist: track.artist,
-        album: '',
-        artwork: track.artwork
+    function emitNowPlaying(currentTrack) {
+        console.log(`itunes-win.js | Playing: ${currentTrack.artist}, ${currentTrack.name}`);
+        io.emit('itunes-playing', {
+            track: currentTrack.name,
+            artist: currentTrack.artist,
+            album: currentTrack.album,
+            artwork: currentTrack.artwork
+        });
+    }
+
+    const iTunes = new NowPlaying({
+        fetchCover: true,
+        player: PlayerName.ITUNES
     });
-  }
 
-  function getNowPlaying() {
-    // Note that iTunes.getNowplaying doesn't have a capital P.
-    itunes.getNowplaying((err, track) => {
-      // Make sure we actually connected to iTunes.
-      if(err) { console.log('nowplaying-win.js | Error: ' + err); }
-      // Make sure we actually have a song from iTunes.
-      else if(!track && currentTrack.track !== '') {
-        console.log('nowplaying-win.js | No track currently playing.');
-        currentTrack = {
-          track: '',
-          artist: '',
-          album: '',
-          artwork: ''
-        }
-      }
-      else {
-        // If the new track is the same as the old track, don't bother doing anything else.
-        if(track.name !== currentTrack.track) {
+    setInterval(() => {
+        iTunes.update();
+        let newPath = iTunes.getFilePath();
 
-          // If able to find album art, save it to a temp file. (Package limitation.)
-          if(track.artworkCount > 0) {
-            // Create the tempfile name.
-            const tmpArtworkPath = app.getPath("temp") + "\\temp." + track.artworkFormat;
-            console.log('nowplaying-win.js | tempfile: ' + tmpArtworkPath);
-
-            // Save artwork to tempfile.
-            itunes.saveNowplayingArtworkToFile(tmpArtworkPath, (err) => {
-              if(err) { console.log('nowplaying-win.js | Error: ' + err); }
-              console.log(`save artwork to: ${tmpArtworkPath}`);
-              
-              // Read file's base 64 into variable.
-              const image = fs.readFileSync(tmpArtworkPath, {encoding: 'base64'});
-
-              // Update the currentTrack;
-              currentTrack = {
-                track: track.name,
-                artist: track.artist,
-                album: '',
-                artwork: image
-              };
+        if (newPath != trackPath) {
+            let coverPath = iTunes.getCoverPath();
+            trackPath = newPath;
             
-              // Let the overlay know the track changed.
-              emitNowPlaying(currentTrack);
+            emitNowPlaying({
+                name: iTunes.getTitle(),
+                artist: iTunes.getArtist(),
+                album: iTunes.getAlbum(),
+                artwork: coverPath ? fileToBase64(coverPath) : null
             });
-
-
-          }
-          else {
-            console.log("nowplaying-win.js | Couldn't find an album art.");
-
-            // Update the currentTrack;
-            currentTrack = {
-              track: track.name,
-              artist: track.artist,
-              album: '',
-              artwork: ''
-            };
-      
-            // Let the overlay know the track changed.
-            emitNowPlaying(currentTrack);
-          }
         }
-      }
-    })
-
-    // getNowPlaying loops forever. Check if the track's changed in another second or two.
-    setTimeout(getNowPlaying, 2000);
-  }
-
-  // Kick things off initially.
-  getNowPlaying();
-}
+    }, 1000);
+};
