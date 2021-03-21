@@ -77,7 +77,7 @@ class Overlay extends React.Component {
     // Display drink details, if visible.
     // Otherwise, remove component.
     function initDrink(msg) {
-      mountPanel('drink', '!beer', msg.brewery, msg.beer, msg.hidden);
+      mountPanel('drink', '!beer', msg.beer, msg.brewery, msg.hidden);
     }
 
     // CHART
