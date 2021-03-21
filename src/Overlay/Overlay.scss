@@ -20,7 +20,12 @@
 
 @font-face {
     font-family: 'ChevyRay - Skullboy Mono';
-    src: local('ChevyRay - Skullboy'), url('./fonts/ChevyRay\ \-\ Skullboy\ Mono.ttf') format('truetype');
+    src: local('ChevyRay - Skullboy Mono'), url('./fonts/ChevyRay\ \-\ Skullboy\ Mono.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'ChevyRay - Skullboy';
+    src: local('ChevyRay - Skullboy'), url('./fonts/ChevyRay\ \-\ Skullboy.ttf') format('truetype');
 }
 
 /*******************/
@@ -472,6 +477,7 @@
 }
 
 .panel-content-group-left canvas {
+    margin-top: -1em;
     -webkit-font-smoothing: subpixel-antialiased;
 }
 
@@ -496,6 +502,7 @@
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
+    margin-top: -1em;
     margin-bottom: 5px;
     font-family: 'ChevyRay - Skullboy Mono';
     -webkit-font-smoothing: none;
@@ -537,7 +544,7 @@
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
-    margin-top: -5px;
+    margin-top: -2.1em;
 }
 
 .panel-chart-image {
