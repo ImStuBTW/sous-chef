@@ -130,7 +130,7 @@
     overflow: hidden;
     background: rgba(50, 50, 50, 0.75);
     padding: 0px 0px 12px 12px;
-    margin: 10px 0px;
+    margin: 9px 0px;
     min-width: 170px;
 }
 
@@ -225,7 +225,7 @@
     border-right: 4px solid white;
     border-bottom: 4px solid white;
     margin: 1em 0 0 0;
-    padding: 30px 16px 6px 16px;
+    padding: 16px 16px 6px 16px;
 }
 
 /* Hacky-header. Adjust top class when changing font size. */
@@ -233,20 +233,20 @@
 .panel-header-left {
     padding-left: 0.4em;
     padding-right: 0.4em;
-    font-size: 0.8em;
+    font-size: 1em;
     font-weight: bold;
     font-family: 'ChevyRay - Little League';
 }
 
 .panel-header {
     position: relative;
-    top: -1.6em;
+    top: -1.3em;
 }
 
 .panel-header-left {
     position: absolute;
     right: 10px;
-    top: -7px;
+    top: -9px;
 }
 
 /* Panel-header psudo classes handle top border line without drawing over text. */
@@ -281,7 +281,6 @@
 .panel-image-left {
     width: 100px;
     height: 100px;
-    margin-top: -1.35em;
     margin-right: 15px;
 }
 
@@ -303,7 +302,7 @@
 }
 
 .panel-image-wrapper-slide-none {
-    /*animation: slide-from-left 750ms forwards;*/
+    animation: slide-from-left 750ms forwards;
 }
 
 .panel-image-notitle-none {
@@ -436,7 +435,7 @@
 .panel-content-nomargin {
     margin-top: -0.5em;
     font-family: 'ChevyRay - Oeuf';
-    font-size: 2em;
+    font-size: 2.4em;
     margin-bottom: 0px;
 }
 
@@ -446,9 +445,9 @@
 
 /* Smaller sub-title text. */
 .panel-subcontent {
-    margin-top: 0.2em;
+    margin-top: -0.25em;
     font-family: 'ChevyRay - Oeuf';
-    font-size: 1.25em;
+    font-size: 1.5em;
     margin-bottom:0px;
 }
 
@@ -474,6 +473,10 @@
 
 .panel-content-group-left canvas {
     -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.panel-content-group-left {
+    margin-top: 1em;
 }
 
 .panel-chart {
@@ -635,7 +638,7 @@
 .panel-timercontent {
     font-family: 'ChevyRay - Oeuf';
     font-size: 3.8em;
-    margin: -14px 0 -7px 0;
+    margin: -25px 0 -20px 0;
     text-align: center;
 }
 
@@ -665,4 +668,16 @@ twitter-widget {
 
 .d-none {
     display: none;
+}
+
+#tweet-embed {
+    max-width: 40vw;
+}
+
+.tweet {
+    zoom: 140%;
+}
+
+.AdaptiveMedia {
+    zoom: 60%;
 }

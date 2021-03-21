@@ -15,6 +15,7 @@
     "chart.js": "^2.8.0",
     "chartjs-plugin-streaming": "^1.8.0",
     "easytimer.js": "^4.3.1",
+    "electron-context-menu": "^2.5.0",
     "electron-is-dev": "^1.2.0",
     "electron-oauth-helper": "^5.1.1",
     "electron-squirrel-startup": "^1.0.0",

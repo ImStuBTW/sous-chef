@@ -2,6 +2,7 @@
 // isDev toggles some dev mode checks.
 // path is a helper function for relative file locations.
 const { app, BrowserWindow, globalShortcut, shell } = require("electron");
+const contextMenu = require('electron-context-menu');
 const isDev = require("electron-is-dev");
 const path = require("path");
 
@@ -70,6 +71,17 @@ if(require("electron-squirrel-startup")) {
 
 /******* Electron Code *******/
 
+// Create a context menu for right click pasting.
+contextMenu({
+	prepend: (defaultActions, parameters, browserWindow) => [
+		{
+			label: 'Rainbow',
+			// Only show it when right-clicking images
+			visible: parameters.mediaType === 'image'
+		}
+	]
+});
+
 function createWindow() {
   // Create the main window.
   const mainWindow = new BrowserWindow({
@@ -78,7 +90,8 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      allowFileAccess: true
+      allowFileAccess: true,
+			spellcheck: true
     }
   });
 

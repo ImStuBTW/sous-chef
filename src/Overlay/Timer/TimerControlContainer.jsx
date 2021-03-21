@@ -83,22 +83,21 @@ class TimerControlContainer extends React.Component {
             timers: this.streamTimers.map((timer) => {return TimerUtil.extractTimerInfo(timer)})
         };
 
-        this.updateSeconds = this.updateSeconds.bind(this);
         this.createNewTimer = this.createNewTimer.bind(this);
         this.deleteTimer = this.deleteTimer.bind(this);
         this.repeatTimer = this.repeatTimer.bind(this);
     }
 
-    // Callback that updates the timer state every second.
-    updateSeconds(id, name, seconds, event) {
-        let timers = this.streamTimers.map(TimerUtil.extractTimerInfo);
-
-        this.setState({timers: timers});
-    };
-
     // Create a new timer for this container.
     createNewTimer(msg) {
-        return new StreamTimer(msg.id, msg.name, msg.seconds, this.updateSeconds);
+        // Callback that updates the timer state every second.
+        let updateSeconds = (id, name, seconds, event) => {
+            let timers = this.streamTimers.map(TimerUtil.extractTimerInfo);
+
+            this.setState({timers: timers});
+        };
+
+        return new StreamTimer(msg.id, msg.name, msg.seconds, updateSeconds);
     }
 
     // Callback to trigger timer deletion.
