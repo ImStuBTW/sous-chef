@@ -50,6 +50,11 @@ class CreateTimer extends Component {
       name: newName,
       seconds: totalSeconds
     });
+    this.setState({
+      name: '',
+      minutes: '',
+      seconds: ''
+    })
   }
 
   render() {

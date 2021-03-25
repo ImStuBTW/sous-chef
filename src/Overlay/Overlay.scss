@@ -31,6 +31,10 @@
 /*******************/
 /* Main App Styles */
 /*******************/
+/* Prevent pinch-to-zoom on Safari. */
+body {
+  touch-action: pan-x pan-y;
+}
 
 /* Body take 100% of height and width of page. Transparent background. */
 #overlay-body {
