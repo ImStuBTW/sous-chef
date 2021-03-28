@@ -46,6 +46,7 @@
     "socket.io-client": "^3.1.0",
     "styled-components": "^5.2.1",
     "twitch": "^2.2.3",
+    "twitch-chat-client": "^2.3.5",
     "twitter": "^1.7.1",
     "uuid": "^3.3.2",
     "web-vitals": "^0.2.4"
@@ -58,7 +59,7 @@
     "@electron-forge/maker-zip": "^6.0.0-beta.54",
     "concurrently": "^5.3.0",
     "cross-env": "^7.0.3",
-    "electron": "^6.1.12",
+    "electron": "^5.0.13",
     "electron-devtools-installer": "^3.1.1",
     "wait-on": "^5.2.0"
   },
