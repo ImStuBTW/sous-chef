@@ -19,29 +19,30 @@ class Twitch extends Component {
       status: false
     }
 
-    this.handleBotConnect = this.handleBotConnect.bind(this);
-    this.handleLoginConnect = this.handleLoginConnect.bind(this);
-  }
-
-  componentDidMount() {
     // Listen for updates to Twitch status.
     this.props.socket.on('twitch-status', (msg) => {
+      console.log('Twitch.js | twitch-status: ' + msg);
       this.setState({
-        status: msg.status
+        status: msg
       });
     });
 
     // When the component mounts, get the current Twitch status.
     this.props.socket.emit('twitch-fetch', (msg) => {
+      console.log('Twitch.js | twitch-fetch: ' + msg);
       this.setState({
-        status: msg.status
+        status: msg
       });
     });
+
+    this.handleBotConnect = this.handleBotConnect.bind(this);
+    this.handleLoginConnect = this.handleLoginConnect.bind(this);
   }
 
   handleBotConnect() {
     this.props.socket.emit('twitch-connect-bot', (msg) => {
       console.log('Twitch.js | twitch-connect-bot | Twitich Bot Auth Status: ' + msg.status);
+      console.log(msg.status);
       this.setState({
         status: msg.status
       });
@@ -65,7 +66,7 @@ class Twitch extends Component {
                 {(this.state.status) ?
                 <Alert variant="success" className="twitch-alert">Twitch Bot Authenticated Successfully.</Alert>
                 :
-                <Alert variant="success" className="twitch-warning">Twitch Bot Not Authenticated.</Alert>
+                <Alert variant="warning" className="twitch-warning">Twitch Bot Not Authenticated.</Alert>
                 }
               </Col>
             </Form.Row>
