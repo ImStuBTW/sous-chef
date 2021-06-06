@@ -33,20 +33,32 @@ class Beer extends Component {
 
   componentDidMount() {
     // Listen for beer info updates.
-    this.props.socket.on('drink-fetch', (msg) => {
-      console.log('Beer.js | drink-fetch | Drink: ' + msg.beer + ' By: ' + msg.brewery);
+    this.props.socket.on('drink-info', (msg) => {
+      console.log('Beer.js | drink-info | Drink: ' + msg.beer + ' By: ' + msg.brewery);
       this.setState({
         beer: msg.beer,
         brewery: msg.brewery
-      })
-    })
+      });
+    });
+
+    // When component mounts, get the latest beer info from the server.
+    this.props.socket.emit('drink-fetch', (msg) => {
+      if(msg.beer !== '') {
+        console.log('Beer.js | beer-fetch | Drink: ' + msg.beer + ' By: ' + msg.brewery);
+      }
+
+      this.setState({
+        beer: msg.beer,
+        brewery: msg.brewery
+      });
+    });
 
     // Listen for bubbles state updates.
     this.props.socket.on('bubbles-state', (msg) => {
       console.log('Beer.js | bubbles-stage | Bubble State: ' + msg.state);
       this.setState({
         bubbles: msg.state
-      })
+      });
     });
   }
 

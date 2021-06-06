@@ -16,6 +16,10 @@
     border: 2px dashed $secondary;
 }
 
+.image-rotate-button {
+    flex-grow: 2;
+}
+
 @include media-breakpoint-down(xs) {
     .image-form-group {
         margin-top: 15px;

@@ -115,7 +115,7 @@ class Images extends Component {
         serverUrl: msg.url,
         serverHidden: msg.hidden,
         serverRotate: msg.rotate
-      })
+      });
     });
 
     // When component mounts, get the latest image info from the server.
@@ -124,12 +124,13 @@ class Images extends Component {
         console.log('Image.js | image-fetch | Recieving image: ');
         console.log(msg);
       }
-        this.setState({
-          serverUrl: msg.url,
-          serverHidden: msg.hidden,
-          serverRotate: msg.rotate
-        });
-    })
+
+      this.setState({
+        serverUrl: msg.url,
+        serverHidden: msg.hidden,
+        serverRotate: msg.rotate
+      });
+    });
   }
 
   // Submit current url field to server to display.
@@ -163,15 +164,22 @@ class Images extends Component {
                 <Preview url={this.state.serverUrl} isHidden={this.state.serverHidden} rotate={this.state.serverRotate}></Preview>
               </Col>
               <Col sm={10} xs={12} className="image-form-group">
+                <Form.Row className="mb-2">
+                  <Col>
+                    <FormControl placeholder="Image URL" value={this.state.url} onChange={this.handleFormChange} />
+                  </Col>
+                </Form.Row>
                 <Form.Row>
                   <Col>
                     <InputGroup>
-                      <FormControl placeholder="Image URL" value={this.state.url} onChange={this.handleFormChange} />
-                      <InputGroup.Append>
-                        <Button variant="outline-primary" onClick={() => this.handleImage(false, 'none')}>0°</Button>
-                        <Button variant="outline-primary" onClick={() => this.handleImage(false, 'cw')}>90°</Button>
-                        <Button variant="outline-primary" onClick={() => this.handleImage(false, 'flip')}>180°</Button>
-                        <Button variant="outline-primary" onClick={() => this.handleImage(false, 'ccw')}>270°</Button>
+                      <InputGroup.Prepend>
+                        <InputGroup.Text>Rotate:</InputGroup.Text>
+                      </InputGroup.Prepend>
+                      <InputGroup.Append className="image-rotate-button">
+                        <Button variant="outline-primary" onClick={() => this.handleImage(false, 'none')} className="image-rotate-button">0°</Button>
+                        <Button variant="outline-primary" onClick={() => this.handleImage(false, 'cw')} className="image-rotate-button">90°</Button>
+                        <Button variant="outline-primary" onClick={() => this.handleImage(false, 'flip')} className="image-rotate-button">180°</Button>
+                        <Button variant="outline-primary" onClick={() => this.handleImage(false, 'ccw')} className="image-rotate-button">270°</Button>
                       </InputGroup.Append>
                     </InputGroup>
                   </Col>
