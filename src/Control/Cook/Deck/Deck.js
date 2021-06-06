@@ -18,6 +18,7 @@ import prideIcon from '../../../Icons/pride_100.png';
 import bowIcon from '../../../Icons/bow.png';
 import beersIcon from '../../../Icons/beers.png';
 import wolfIcon from '../../../Icons/wolf.png';
+import camIcon from '../../../Icons/camcorder.png';
 
 class Deck extends Component {
   render() {
@@ -76,9 +77,9 @@ class Deck extends Component {
           />
           <DeckButton 
             socket={this.props.socket} 
-            icon={beersIcon}
-            command='bubbles-toggle'
-            argument={''}
+            icon={camIcon}
+            command='obs-scene-set'
+            argument={{scene: 'First Person'}}
           />
           <DeckButton 
             socket={this.props.socket} 
