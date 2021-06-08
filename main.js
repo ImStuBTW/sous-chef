@@ -2,6 +2,7 @@
 // isDev toggles some dev mode checks.
 // path is a helper function for relative file locations.
 const { app, BrowserWindow, globalShortcut, shell } = require("electron");
+const contextMenu = require('electron-context-menu');
 const isDev = require("electron-is-dev");
 const path = require("path");
 
@@ -45,8 +46,8 @@ require('./plugins/trivia.js')(io, clientSocket); // Handle Twitch Trivia Bot
 require('./plugins/twitch.js')(io, clientSocket); // Handle Twitch integration.
 
 // Actviate iTunes media plugin based on OS.
-if (process.platform === 'darwin') { require('./plugins/itunes-mac.js')(io); }
-if (process.platform === 'win32') { require('./plugins/itunes-win.js')(io); }
+if (process.platform === 'darwin') { require('./plugins/nowplaying-mac.js')(io); }
+if (process.platform === 'win32') { require('./plugins/nowplaying-win.js')(io); }
 
 // Advertise over Bonjour/Zeroconf/MDNS that the app can be accessed at http://souschef.local
 var bonjour = require('bonjour')();
@@ -57,7 +58,7 @@ bonjour.publish({ name: 'Sous Chef', host: bonjourUrl, type: 'http', port: 80})
 let installExtension, REACT_DEVELOPER_TOOLS;
 
 // Load React Dev Tools if running in dev mode.
-if(isDev) {
+if(isDev && process.platform !== 'win32') {
   const devTools = require("electron-devtools-installer");
   installExtension = devTools.default;
   REACT_DEVELOPER_TOOLS = devTools.REACT_DEVELOPER_TOOLS;
@@ -70,6 +71,17 @@ if(require("electron-squirrel-startup")) {
 
 /******* Electron Code *******/
 
+// Create a context menu for right click pasting.
+contextMenu({
+	prepend: (defaultActions, parameters, browserWindow) => [
+		{
+			label: 'Rainbow',
+			// Only show it when right-clicking images
+			visible: parameters.mediaType === 'image'
+		}
+	]
+});
+
 function createWindow() {
   // Create the main window.
   const mainWindow = new BrowserWindow({
@@ -78,9 +90,13 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      allowFileAccess: true
+      allowFileAccess: true,
+			spellcheck: true
     }
   });
+
+  // Ditch the menu bar if on Windows.
+  if (process.platform === 'win32') { mainWindow.removeMenu(); }
 
   // Load the Create-React-App localhost if in dev mode,
   // otherwise, load from Express app.
@@ -106,7 +122,7 @@ function createWindow() {
 app.on('ready', () => {
   createWindow();
 
-  if(isDev) {
+  if(isDev && process.platform !== 'win32') {
     installExtension(REACT_DEVELOPER_TOOLS)
       .then(name => console.log(`Added Extension:  ${name}`))
       .catch(error => console.log(`An error occurred: , ${error}`));

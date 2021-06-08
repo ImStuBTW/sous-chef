@@ -18,15 +18,12 @@ class TweetPanel extends React.Component {
       tweetStyle = 'panel-tweet-content'
     }
 
-    return (
-      <div className={wrapperStyle}>
-        <div className={noTitleStyle}>
-          <div className={contentGroupStyle}>
-            <Tweet className={tweetStyle} data={this.props.tweet} autoPlay={true} />
-          </div>
-        </div>
-      </div>
-    );
+    console.log(this.props.tweet);
+
+    let tweetPanel = '';
+    if(this.props.tweet.user) { tweetPanel = <div className={wrapperStyle}><div className={noTitleStyle}><div className={contentGroupStyle}><Tweet className={tweetStyle} data={this.props.tweet} autoPlay={true} /></div></div></div>; }
+
+    return (tweetPanel);
   }
 };
 

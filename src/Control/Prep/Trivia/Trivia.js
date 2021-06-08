@@ -98,7 +98,7 @@ class Trivia extends Component {
               <Col>
                 <InputGroup className="triva-interval">
                   <InputGroup.Prepend>
-                    <InputGroup.Text>Triva Interval:</InputGroup.Text>
+                    <InputGroup.Text>Interval:</InputGroup.Text>
                   </InputGroup.Prepend>
                   <FormControl type="number" placeholder="Seconds" value={this.state.interval} onChange={this.handleIntervalForm} />
                   <InputGroup.Append>

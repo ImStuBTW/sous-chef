@@ -268,13 +268,13 @@ module.exports = function(io) {
                 authorize_url: "https://id.twitch.tv/oauth2/authorize",
                 response_type: "token",
                 client_id: twitchKeys.clientId, // Client ID from .gitignored config file. See header.
-                redirect_uri: "http://localhost", 
+                redirect_uri: "http://localhost/", 
                 scope: 'chat:read chat:edit channel:moderate channel:read:subscriptions', // Last comma isn't a typo.
             });
 
             provider.on("before-authorize-request", parameter => {
                 parameter["force_verify"] = "true"
-            });            
+            });   
 
             return provider;
         };
@@ -300,6 +300,10 @@ module.exports = function(io) {
                 window = null
             });
 
+            window.webContents.on('will-navigate', function (event, newUrl) {
+                console.log("twitch-client.js | getWindow | Will-Navigate: " + newUrl);
+            });
+
             return window;
         };
 
@@ -316,8 +320,6 @@ module.exports = function(io) {
 
         // ON twitch-connect-bot: Initiate Twitch OAuth login sequence.
         socket.on('twitch-connect-bot', () => {
-
-            console.log('twitch-client.js | twitch-connect-bot');
             const provider = getProvider();
             let window = getWindow();
         
@@ -325,6 +327,7 @@ module.exports = function(io) {
             // Access token gets stored in Electron main thread.
             provider.perform(window).then(async (resp) => {
                 window.close()
+                console.log(resp);
                 const token = qs.parse(resp).access_token; // query-string package reads ?=access_token from returned URL
                 console.log("twitch-client.js | twitch-connect-bot | Twitch OAuth: Access Token: " + token);
                 store.delete(botAccessToken);
@@ -338,7 +341,6 @@ module.exports = function(io) {
         });
 
         socket.on('twitch-connect-owner', () => {
-
             console.log('twitch-client.js | twitch-connect-owner');
             const provider = getProvider();
             let window = getWindow();
@@ -346,9 +348,9 @@ module.exports = function(io) {
             // When the OAuth provider has done its job, it closes the window and parases the access token.
             // Access token gets stored in Electron main thread.
             provider.perform(window).then(async (resp) => {
-                window.close()
+                window.close();
                 const token = qs.parse(resp).access_token; // query-string package reads ?=access_token from returned URL
-                console.log("twitch-client.js | twitch-connect-owner | Twitch OAuth: Access Token: " + token);
+                console.log("twitch-client.js | twitch-connect-owner | Twitch OAuth: Owner Token: " + token);
                 store.delete(ownerAccessToken);
                 store.set(ownerAccessToken, token); // Save token to storage
                 connectBroadcaster();
