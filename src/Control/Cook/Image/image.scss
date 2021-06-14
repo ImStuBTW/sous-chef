@@ -20,6 +20,11 @@
     flex-grow: 2;
 }
 
+.image-rotate-image {
+  height: 25px;
+  margin: auto;
+}
+
 @include media-breakpoint-down(xs) {
     .image-form-group {
         margin-top: 15px;
