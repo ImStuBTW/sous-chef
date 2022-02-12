@@ -18,7 +18,7 @@ module.exports = function(io, clientSocket) {
 
     const obsChangeScene = (scene) => {
         // TODO: Use obsSendCommand
-        obs.send('obs.js | SetCurrentScene', {'scene-name': scene}).then((response) => {
+        obs.send('SetCurrentScene', {'scene-name': scene}).then((response) => {
             if(response.status === 'ok') {
                 io.emit('obs-scene-info', scene);
             }

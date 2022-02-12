@@ -1,4 +1,3 @@
-// import {NowPlaying, PlayerName} from "nowplaying-node";
 const np = require("nowplaying-node"),
       fs = require('fs');
 

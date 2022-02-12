@@ -30,13 +30,25 @@ class Recipe extends Component {
 
   componentDidMount() {
     // Listen for recipe info updates.
-    this.props.socket.on('recipe-fetch', (msg) => {
-      console.log('Recipe.js | recipe-fetch | Drink: ' + msg.title + ' ' + msg.subtitle);
+    this.props.socket.on('recipe-info', (msg) => {
+      console.log('Recipe.js | recipe-info | Recipe: ' + msg.title + ' ' + msg.subtitle);
       this.setState({
         title: msg.title,
         subtitle: msg.subtitle
-      })
-    })
+      });
+    });
+
+    // When component mounts, get the latest recipe info from the server.
+    this.props.socket.emit('recipe-fetch', (msg) => {
+      if(msg.title !== '') {
+        console.log('Recipe.js | recipe-fetch | Recipe: ' + msg.title + ' ' + msg.subtitle);
+      }
+
+      this.setState({
+        title: msg.title,
+        subtitle: msg.subtitle
+      });
+    });      
   }
 
   // Handle title form inputs.
