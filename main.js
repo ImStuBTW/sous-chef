@@ -85,8 +85,8 @@ contextMenu({
 function createWindow() {
   // Create the main window.
   const mainWindow = new BrowserWindow({
-    width: 1000,
-    height: 800,
+    width: 356,
+    height: 950,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
