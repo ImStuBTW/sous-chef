@@ -1,6 +1,7 @@
 // Require Twitch client and client ID config file.
-const TwitchClient = require('twitch').default;
-const ChatClient = require('twitch-chat-client').default;
+const {ApiClient} = require('@twurple/api');
+const {StaticAuthProvider} = require('@twurple/auth');
+const {ChatClient} = require('@twurple/chat');
 const twitchKeys = require('../.twitch-key');
 
 // Require Electron BrowserWindow.
@@ -58,12 +59,14 @@ module.exports = function(io) {
         io.emit('twitch-status', true);
 
         if (!twitchBot.client) {
-            TwitchClient.withCredentials(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions'])
-                .then((client) => {
-                    twitchBot.client = client;
-                    connectToChat();
-                    fetchTwitchFollower();
-                });
+            const authProvider = new StaticAuthProvider(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
+            let client = new ApiClient({authProvider});
+            // let client = ApiClient.withCredentials(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
+            // TwitchClient.withCredentials(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions'])
+            //    .then((client) => {
+            twitchBot.client = client;
+            connectToChat(authProvider);
+            fetchTwitchFollower();
         }
         // await createTwitchClient();
     };
@@ -72,28 +75,43 @@ module.exports = function(io) {
         twitchBroadcaster.authenticated = true;
 
         if (!twitchBroadcaster.client) {
-            TwitchClient.withCredentials(twitchKeys.clientId, store.get(ownerAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions'])
-                .then((client) => {
-                    twitchBroadcaster.client = client;
-                    connectHostOnlyChat();
-                    fetchTwitchSubs();
-                });
+            const authProvider = new StaticAuthProvider(twitchKeys.clientId, store.get(ownerAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
+            let client = new ApiClient({authProvider});
+            // let client = ApiClient.withCredentials(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
+            //TwitchClient.withCredentials(twitchKeys.clientId, store.get(ownerAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions'])
+            //    .then((client) => {
+            twitchBroadcaster.client = client;
+            connectHostOnlyChat(authProvider);
+            fetchTwitchSubs();
         }
     };
 
     // Check if the access token is valid start startup. Initialize app if so.
     if (store.get(botAccessToken)) {
+        const authProvider = new StaticAuthProvider(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
+        let client = new ApiClient({authProvider});
+        client.getTokenInfo(store.get(botAccessToken), twitchKeys.clientId).then((results) => {
+            connectBot();
+        }).catch((error) => {
+            console.error("Unable to use saved bot token: ${error}");
+        });
+        /*
         TwitchClient.getTokenInfo(twitchKeys.clientId, store.get(botAccessToken)).then((results) => {
             if (results._data.valid) {
                 connectBot();
             }
         });
+        */
     }
     if (store.get(ownerAccessToken)) {
-        TwitchClient.getTokenInfo(twitchKeys.clientId, store.get(ownerAccessToken)).then((results) => {
-            if (results._data.valid) {
-                connectBroadcaster();
-            }
+        //TwitchClient.getTokenInfo(twitchKeys.clientId, store.get(ownerAccessToken)).then((results) => {
+        //    if (results._data.valid) {
+        const authProvider = new StaticAuthProvider(twitchKeys.clientId, store.get(ownerAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
+        let client = new ApiClient({authProvider});
+        client.getTokenInfo(store.get(ownerAccessToken), twitchKeys.clientId).then((results) => {
+            connectBroadcaster();
+        }).catch((error) => {
+            console.error("Unable to use saved broadcaster token: ${error}");
         });
     }
 
@@ -106,140 +124,158 @@ module.exports = function(io) {
     }
     */
 
-    const connectHostOnlyChat = async () => {
+    const connectHostOnlyChat = async (authProvider) => {
         if (!twitchBroadcaster.chatClient && twitchBroadcaster.authenticated && twitchBroadcaster.client) {
-            const chatClient = await ChatClient.forTwitchClient(twitchBroadcaster.client);
+            let chatClient;
+            if (authProvider) {
+                chatClient = new ChatClient(authProvider);
+            } else {
+                chatClient = await ChatClient.forTwitchClient(twitchBroadcaster.client);
+            }
             await chatClient.connect();
-            await chatClient.waitForRegistration();
-            await chatClient.join('andrewcooks');
-            twitchBroadcaster.chatClient = chatClient;
+            //await chatClient.waitForRegistration();
+            chatClient.onRegister(async () => {
+                await chatClient.join('andrewcooks');
+                twitchBroadcaster.chatClient = chatClient;
+        
+                chatClient.onHosted((channel, byChannel, auto, viewers) => {
+                    // NOTE: you MUST be logged in as the channel owner in order to reveive this event (ugh)
+                    let eventInfo = {
+                        channel: channel, 
+                        byChannel: byChannel, 
+                        auto: auto, 
+                        count: viewers
+                    };
     
-            chatClient.onHosted((channel, byChannel, auto, viewers) => {
-                // NOTE: you MUST be logged in as the channel owner in order to reveive this event (ugh)
-                let eventInfo = {
-                    channel: channel, 
-                    byChannel: byChannel, 
-                    auto: auto, 
-                    count: viewers
-                };
-
-                io.emit(events.HOST, eventInfo);
-                triggerCallback(events.HOST, eventInfo);
-            });    
+                    io.emit(events.HOST, eventInfo);
+                    triggerCallback(events.HOST, eventInfo);
+                });        
+            });
         }
     }
 
     // Connects to Twitch Chat and sets up listeners for chat events.
-    const connectToChat = async () => {
+    const connectToChat = async (authProvider) => {
         // Only perform if chat isn't already connected and Twitch credentials are valid.
         if(!twitchBot.chatClient && twitchBot.authenticated && twitchBot.client) {
             // Create chatClient connection based off our twitchClient connection.
             // Connect and join to the 'andrewcooks' chatroom.
             // {logLevel: 'debug'}
-            const chatClient = await ChatClient.forTwitchClient(twitchBot.client);
-            await chatClient.connect();
-            await chatClient.waitForRegistration();
-            await chatClient.join('andrewcooks');
-            console.log("twitch-client.js | Twitch Chat Connected.");
-            twitchBot.chatClient = chatClient;
+            let chatClient;
+            if (authProvider) {
+                chatClient = new ChatClient(authProvider, {channels: ['andrewcooks']});
+            } else {
+                chatClient = await ChatClient.forTwitchClient(twitchBot.client);
+            }
 
-            // Even listeners. Emmit Socket.IO events with all chat objects.
-            chatClient.onBitsBadgeUpgrade((channel, user, upgradeInfo, msg) => {
-                // Fires when a user upgrades their bits badge in a channel.
-                io.emit('twitch-onBitsBadgeUpgrade', Object.assign({}, channel, user, upgradeInfo, msg));
+            chatClient.onRegister(async () => {
+                await chatClient.join('andrewcooks');
+                console.log("twitch-client.js | Twitch Chat Connected.");
+                twitchBot.chatClient = chatClient;
+    
+                // Even listeners. Emmit Socket.IO events with all chat objects.
+                chatClient.onBitsBadgeUpgrade((channel, user, upgradeInfo, msg) => {
+                    // Fires when a user upgrades their bits badge in a channel.
+                    io.emit('twitch-onBitsBadgeUpgrade', Object.assign({}, channel, user, upgradeInfo, msg));
+                });
+                chatClient.onCommunitySub((channel, user, subInfo, msg) => {
+                    // Fires when a gifts random subscriptions to the community of a channel.
+                    let eventInfo = {
+                        giftingUser: user,
+                        giftCount: subInfo.gifterGiftCount
+                    };
+                    io.emit(events.SUBRANDOM, eventInfo);
+                    triggerCallback(events.SUBRANDOM, eventInfo);
+                });
+                chatClient.onRaid((channel, user, raidInfo, msg) => {
+                    let eventInfo = {
+                        raidingUser: user,
+                        raidingDisplayName: raidInfo ? raidInfo.displayName : user,
+                        raidingViewerCount: raidInfo ? raidInfo.viewerCount : null
+                    }
+                    io.emit(events.RAID, eventInfo);
+                    triggerCallback(events.RAID, eventInfo);
+                });
+                chatClient.onResub((channel, user, subInfo, msg) => {
+                    let eventInfo = {
+                        user: user,
+                        subInfo: subInfo,
+                        msg: msg
+                    };
+                    io.emit(events.RESUB, eventInfo);
+                    triggerCallback(events.RESUB, eventInfo);
+                });
+                chatClient.onSub((channel, user, subInfo, msg) => {
+                    let eventInfo = {
+                        user: user,
+                        subInfo: subInfo,
+                        msg: msg
+                    };
+                    io.emit(events.SUB, eventInfo);
+                    triggerCallback(events.SUB, eventInfo);
+                });
+                chatClient.onSubGift((channel, user, subInfo, msg) => {
+                    let eventInfo = {
+                        giftingUser: subInfo.gifter,
+                        receivingUser: user
+                    };
+                    io.emit(events.SUBGIFT, eventInfo);
+                    triggerCallback(events.SUBGIFT, eventInfo);
+                });
+                chatClient.onPrivmsg((channel, user, message, msgInfo) => {
+                    let eventInfo = {
+                        user: user, 
+                        message: message, 
+                        info: msgInfo
+                    };
+                    io.emit(events.CHAT, eventInfo);
+                    triggerCallback(events.CHAT, eventInfo);
+                });    
             });
-            chatClient.onCommunitySub((channel, user, subInfo, msg) => {
-                // Fires when a gifts random subscriptions to the community of a channel.
-                let eventInfo = {
-                    giftingUser: user,
-                    giftCount: subInfo.gifterGiftCount
-                };
-                io.emit(events.SUBRANDOM, eventInfo);
-                triggerCallback(events.SUBRANDOM, eventInfo);
+
+            await chatClient.connect().catch((err) => {
+                console.log(err);
             });
-            chatClient.onRaid((channel, user, raidInfo, msg) => {
-                let eventInfo = {
-                    raidingUser: user,
-                    raidingDisplayName: raidInfo ? raidInfo.displayName : user,
-                    raidingViewerCount: raidInfo ? raidInfo.viewerCount : null
-                }
-                io.emit(events.RAID, eventInfo);
-                triggerCallback(events.RAID, eventInfo);
-            });
-            chatClient.onResub((channel, user, subInfo, msg) => {
-                let eventInfo = {
-                    user: user,
-                    subInfo: subInfo,
-                    msg: msg
-                };
-                io.emit(events.RESUB, eventInfo);
-                triggerCallback(events.RESUB, eventInfo);
-            });
-            chatClient.onSub((channel, user, subInfo, msg) => {
-                let eventInfo = {
-                    user: user,
-                    subInfo: subInfo,
-                    msg: msg
-                };
-                io.emit(events.SUB, eventInfo);
-                triggerCallback(events.SUB, eventInfo);
-            });
-            chatClient.onSubGift((channel, user, subInfo, msg) => {
-                let eventInfo = {
-                    giftingUser: subInfo.gifter,
-                    receivingUser: user
-                };
-                io.emit(events.SUBGIFT, eventInfo);
-                triggerCallback(events.SUBGIFT, eventInfo);
-            });
-            chatClient.onPrivmsg((channel, user, message, msgInfo) => {
-                let eventInfo = {
-                    user: user, 
-                    message: message, 
-                    info: msgInfo
-                };
-                io.emit(events.CHAT, eventInfo);
-                triggerCallback(events.CHAT, eventInfo);
-            });
+            //await chatClient.waitForRegistration();
         }
     }
 
     // Function to check if the latest Twitch follower is different from the previous.
     const fetchTwitchFollower = () => {
         // Send the old value while we fetch the latest from Twitch.
-        const followResult = twitchBot.client.helix.users.getFollows({'followedUser': '249278489'});
+        const followResult = twitchBot.client.helix.users.getFollowsPaginated({'followedUser': '249278489'});
         followResult.getAll().then(result => {
             result.sort(function(a,b) {
-                return a._data.followed_at - b._data.followed_at;
+                return b.followDate - a.followDate;
             });
             // If the app's starting up, get the most recent user.
             if(latestFollower == '') {
                 followers = result.map((follower) => {
-                    return follower._data.from_name.toLowerCase();
+                    return follower.userName.toLowerCase();
                 });
                 followers.push('andrewcooks'); // Don't forget me!
     
-                console.log('twitch-client.js | Latest Follower: ' + result[0]._data.from_name);
-                latestFollower = result[0]._data.from_name;
+                console.log('twitch-client.js | Latest Follower: ' + result[0].userDisplayName);
+                latestFollower = result[0].userDisplayName;
             }
             // If there's a new Twitch follower, send it.
-            else if(latestFollower !== result[0]._data.from_name) {
-                latestFollower = result[0]._data.from_name;
+            else if(latestFollower !== result[0].userDisplayName) {
+                latestFollower = result[0].userDisplayName;
                 console.log(`twitch-client.js | New Follower: ${latestFollower}`);
-                followers.push(latestFollower.toLowerCase());
+                followers.push(result[0].userName.toLowerCase());
                 io.emit(events.FOLLOW, {user: latestFollower});
                 triggerCallback(events.FOLLOW, {user: latestFollower});
             }
             else {
                 //console.log('twitch-client.js  Latest Follower Still: ' +result[0]._data.from_name);
                 // Send latest follower during testing. Omit when live.
-                io.emit('twitch-follower', result[0]._data.from_name);
+                io.emit('twitch-follower', result[0].userDisplayName);
             }
         });
     }
 
     const fetchTwitchSubs = () => {
-        const subResult = twitchBroadcaster.client.helix.subscriptions.getSubscriptions('249278489');
+        const subResult = twitchBroadcaster.client.helix.subscriptions.getSubscriptionsPaginated('249278489');
         subResult.getAll().then(result => {
             subs = result.map((sub) => {
                 return sub.userDisplayName.toLowerCase();
