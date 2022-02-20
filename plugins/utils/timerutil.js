@@ -4,7 +4,8 @@ module.exports = class TimerUtil {
         return {
             id: streamTimer.id,
             name: streamTimer.name,
-            seconds: streamTimer.getSeconds()
+            seconds: streamTimer.getSeconds(),
+            originalSeconds: streamTimer.getOriginalSeconds()
         };
     }
 
