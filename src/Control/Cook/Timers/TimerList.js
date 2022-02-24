@@ -56,7 +56,11 @@ class ActiveTimers extends Component {
       this.setState({
         timers: this.state.timers.map((timer) => {
           if(timer.id === msg.id) {
-            return msg;
+            return {
+              id: msg.id,
+              name: msg.name,
+              seconds: msg.originalSeconds
+            };
           }
           else {
             return timer;

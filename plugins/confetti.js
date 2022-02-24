@@ -19,6 +19,12 @@ module.exports = function(io, clientSocket) {
         }
     });
 
+    // Also listen for specific states, such as when confetti
+    // is started by a twitch raid.
+    clientSocket.on('confetti-state', (msg) => {
+        confetti.state = msg.state;
+    });
+
     io.on('connection', (socket) => {
         // FETCH CONFETTI
         socket.on('confetti-fetch', (fn) => {

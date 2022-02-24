@@ -8,6 +8,7 @@ module.exports = class StreamTimer {
         this.id = id;
         this.name = name;
         this.timer = new EasyTimer.Timer();
+        this.originalSeconds = parseInt(seconds);
         this.updateCallback = updateCallback;
         this.expiredCallback = expiredCallback;
 
@@ -36,6 +37,10 @@ module.exports = class StreamTimer {
     getSeconds() {
         let timeValues = this.timer.getTimeValues();
         return (timeValues.hours * 3600) + (timeValues.minutes * 60) + timeValues.seconds;
+    }
+
+    getOriginalSeconds() {
+        return this.originalSeconds;
     }
 
     // Stop the timer. Event will no longer fire.
