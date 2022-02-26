@@ -32,7 +32,7 @@ require('./plugins/banner.js')(io); // Show info banners.
 require('./plugins/botmessages.js')(io); // Handle Twitch bot messages.
 require('./plugins/image.js')(io); // Show images.
 require('./plugins/probe.js')(io); // Show temperature probe.
-require('./plugins/recipe.js')(io); // Show recipe info.
+require('./plugins/recipe.js')(io, clientSocket); // Show recipe info.
 require('./plugins/timer.js')(io); // Handle cooking timers.
 require('./plugins/tweet.js')(io); // Show Twitter embeds.
 require('./plugins/utility.js')(io, frontendPort); // Show Twitter embeds.

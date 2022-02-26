@@ -16,7 +16,6 @@ import stoveIcon from '../../../Icons/cooking.png';
 import dontAwooIcon from '../../../Icons/dont_awoo.png';
 import prideIcon from '../../../Icons/pride_100.png';
 import bowIcon from '../../../Icons/bow.png';
-import beersIcon from '../../../Icons/beers.png';
 import wolfIcon from '../../../Icons/wolf.png';
 import camIcon from '../../../Icons/camcorder.png';
 

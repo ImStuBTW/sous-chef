@@ -34,7 +34,8 @@ class Recipe extends Component {
       console.log('Recipe.js | recipe-info | Recipe: ' + msg.title + ' ' + msg.subtitle);
       this.setState({
         title: msg.title,
-        subtitle: msg.subtitle
+        subtitle: msg.subtitle,
+        url: msg.url
       });
     });
 
@@ -46,7 +47,8 @@ class Recipe extends Component {
 
       this.setState({
         title: msg.title,
-        subtitle: msg.subtitle
+        subtitle: msg.subtitle,
+        url: msg.url
       });
     });      
   }
@@ -69,10 +71,11 @@ class Recipe extends Component {
   // Submit drink information to the server.
   // TODO: Handle the URL field in a useful way.
   handleSubmit(hidden) {
-    this.props.socket.emit('recipe-update', {title: this.state.title, subtitle: this.state.subtitle, hidden: hidden}, (msg) => {
+    this.props.socket.emit('recipe-update', {title: this.state.title, subtitle: this.state.subtitle, url: this.state.url, hidden: hidden}, (msg) => {
       this.setState({
         title: msg.title,
         subtitle: msg.subtitle,
+        url: msg.url
       })
     });
   }

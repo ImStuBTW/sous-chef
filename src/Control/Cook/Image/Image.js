@@ -177,7 +177,7 @@ class Images extends Component {
                     <InputGroup>
                       <InputGroup.Prepend>
                         <InputGroup.Text className="d-none d-sm-inline">Rotate:</InputGroup.Text>
-                        <InputGroup.Text className="d-inline d-sm-none"><img className="image-rotate-image" src={rotateIcon} alt="Rotate Image"/></InputGroup.Text>
+                        <InputGroup.Text className="d-inline d-sm-none"><img className="image-rotate-image" src={rotateIcon} alt="Rotate"/></InputGroup.Text>
                       </InputGroup.Prepend>
                       <InputGroup.Append className="image-rotate-button">
                         <Button variant="outline-primary" onClick={() => this.handleImage(false, 'none')} className="image-rotate-button">0°</Button>

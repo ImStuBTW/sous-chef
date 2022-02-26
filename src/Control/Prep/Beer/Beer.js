@@ -37,7 +37,8 @@ class Beer extends Component {
       console.log('Beer.js | drink-info | Drink: ' + msg.beer + ' By: ' + msg.brewery);
       this.setState({
         beer: msg.beer,
-        brewery: msg.brewery
+        brewery: msg.brewery,
+        url: msg.url
       });
     });
 
@@ -49,7 +50,8 @@ class Beer extends Component {
 
       this.setState({
         beer: msg.beer,
-        brewery: msg.brewery
+        brewery: msg.brewery,
+        url: msg.url
       });
     });
 
@@ -86,10 +88,11 @@ class Beer extends Component {
   // Submit drink information to the server.
   // TODO: Handle the URL field in a useful way.
   handleSubmit(hidden) {
-    this.props.socket.emit('drink-update', {beer: this.state.beer, brewery: this.state.brewery, hidden: hidden}, (msg) => {
+    this.props.socket.emit('drink-update', {beer: this.state.beer, brewery: this.state.brewery, url: this.state.url, hidden: hidden}, (msg) => {
       this.setState({
         beer: msg.beer,
         brewery: msg.brewery,
+        url: msg.url
       })
     });
   }

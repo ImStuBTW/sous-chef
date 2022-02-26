@@ -1,7 +1,31 @@
-module.exports = function(io) {
-    let recipeInfo = {title: '', subtitle: '', hidden: true},
-        drinkInfo = {brewery: '', beer: '', hidden: true};
+module.exports = function(io, clientSocket) {
+    let recipeInfo = {title: '', subtitle: '', url: '', hidden: true},
+        drinkInfo = {brewery: '', beer: '', url: '', hidden: true};
     
+    clientSocket.on('recipe-chat', () => {
+        if (recipeInfo.title) {
+            let msg = recipeInfo.title;
+            // subtitle?
+            if (recipeInfo.subtitle) { msg += ` ${recipeInfo.subtitle}`; }
+            // url?
+            if (recipeInfo.url) { msg += ` - ${recipeInfo.url}`; }
+
+            io.emit('twitch-chatpost', {message: msg});
+        }
+    });      
+
+    clientSocket.on('drink-chat', () => {
+        if (drinkInfo.beer) {
+            let msg = drinkInfo.beer;
+            // brewery?
+            if (drinkInfo.brewery) { msg += ` (by ${drinkInfo.brewery})`; }
+            // url?
+            if (drinkInfo.url) { msg += ` - ${drinkInfo.url}`; }
+
+            io.emit('twitch-chatpost', {message: msg});
+        }
+    });      
+
     io.on('connection', (socket) => {
         // GET RECIPE
         // This message occurs when a recipe state is requested on the control panel.

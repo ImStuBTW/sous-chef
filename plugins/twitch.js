@@ -61,7 +61,8 @@ module.exports = function(io, clientSocket) {
                 bubbleRegEx = /!tipsy\s?(\d+)?/,
                 noticeRegEx = /!(hey|listen)/,
                 sceneRegEx = /!(stove|kitchen|board|doggo)/,
-                triviaRegEx = /!(trivia|question|answer)\s?(.+)?/;
+                triviaRegEx = /!(trivia|question|answer)\s?(.+)?/,
+                recipeBeerRegEx = /!(recipe|beer)/;
 
             let match = confettiRegEx.exec(lowerMessage);
 
@@ -74,6 +75,18 @@ module.exports = function(io, clientSocket) {
                 }
                 io.emit('confetti-single', props);
                 return;
+            }
+
+            match = recipeBeerRegEx.exec(lowerMessage);
+
+            if (match) {
+                if (match[1] === 'recipe') {
+                    console.log(`twitch.js | ${msg.user} requested recipe info`);
+                    io.emit('recipe-chat');
+                } else if (match[1] === 'beer') {
+                    console.log(`twitch.js | ${msg.user} requested drink info`);
+                    io.emit('drink-chat');
+                }
             }
 
             match = bubbleRegEx.exec(lowerMessage);

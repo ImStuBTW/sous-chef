@@ -16,22 +16,39 @@ class Twitch extends Component {
     super(props);
 
     this.state = {
-      status: false
+      botStatus: false,
+      broadcasterStatus: false
     }
 
-    // Listen for updates to Twitch status.
-    this.props.socket.on('twitch-status', (msg) => {
-      console.log('Twitch.js | twitch-status: ' + msg);
+    // Listen for updates to Twitch bot status.
+    this.props.socket.on('twitch-bot-status', (msg) => {
+      console.log('Twitch.js | twitch-bot-status: ' + msg);
       this.setState({
-        status: msg
+        botStatus: msg
       });
     });
 
-    // When the component mounts, get the current Twitch status.
-    this.props.socket.emit('twitch-fetch', (msg) => {
-      console.log('Twitch.js | twitch-fetch: ' + msg);
+    // Listen for updates to Twitch broadcaster status.
+    this.props.socket.on('twitch-broadcaster-status', (msg) => {
+      console.log('Twitch.js | twitch-broadcaster-status: ' + msg);
       this.setState({
-        status: msg
+        broadcasterStatus: msg
+      });
+    });
+    
+    // When the component mounts, get the current Twitch bot status.
+    this.props.socket.emit('twitch-bot-fetch', (msg) => {
+      console.log('Twitch.js | twitch-bot-fetch: ' + msg);
+      this.setState({
+        botStatus: msg
+      });
+    });
+
+    // When the component mounts, get the current Twitch broadcaster status.
+    this.props.socket.emit('twitch-broadcaster-fetch', (msg) => {
+      console.log('Twitch.js | twitch-broadcaster-fetch: ' + msg);
+      this.setState({
+        broadcasterStatus: msg
       });
     });
 
@@ -41,18 +58,21 @@ class Twitch extends Component {
 
   handleBotConnect() {
     this.props.socket.emit('twitch-connect-bot', (msg) => {
-      console.log('Twitch.js | twitch-connect-bot | Twitich Bot Auth Status: ' + msg.status);
+      console.log(`Twitch.js | twitch-connect-bot | Twitich Bot Auth Status: ${msg.status}`);
       console.log(msg.status);
       this.setState({
-        status: msg.status
+        botStatus: msg.status
       });
-    })
+    });
   }
 
   handleLoginConnect() {
     this.props.socket.emit('twitch-connect-owner', (msg) => {
-      console.log('Twitch.js | twitch-connect-owner | Twitich Broadcaster Auth Started.')
-    })
+      console.log(`Twitch.js | twitch-connect-owner | Twitch Broadcaster Auth Status: ${msg.status}`);
+      this.setState({
+        broadcasterStatus: msg.status
+      });
+    });
   }
 
   render() {
@@ -63,10 +83,19 @@ class Twitch extends Component {
           <Form>
             <Form.Row>
               <Col>
-                {(this.state.status) ?
-                <Alert variant="success" className="twitch-alert">Twitch Bot Authenticated Successfully.</Alert>
+                {(this.state.botStatus) ?
+                <Alert variant="success" className="twitch-alert">Twitch Bot Authenticated.</Alert>
                 :
                 <Alert variant="warning" className="twitch-warning">Twitch Bot Not Authenticated.</Alert>
+                }
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Col>
+                {(this.state.broadcasterStatus) ?
+                <Alert variant="success" className="twitch-alert">Twitch Broadcaster Authenticated.</Alert>
+                :
+                <Alert variant="warning" className="twitch-warning">Twitch Broadcaster Not Authenticated.</Alert>
                 }
               </Col>
             </Form.Row>

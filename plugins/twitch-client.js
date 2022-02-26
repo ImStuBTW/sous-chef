@@ -54,104 +54,68 @@ module.exports = function(io) {
         chatClient: null
     };
 
-    const connectBot = () => {
+    const getAuthProvider = (accessToken) => {
+        let permissions = ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions'];
+
+        // Create authProvider containing access token & requested permissions
+        const authProvider = new StaticAuthProvider(twitchKeys.clientId, accessToken, permissions);
+        return authProvider;
+    }
+
+    // Connect the twitch bot by saving an instance of the API client
+    // and connecting to chat.
+    // NOTE: apiClient is optional.
+    const connectBot = (authProvider, apiClient) => {
         twitchBot.authenticated = true;
-        io.emit('twitch-status', true);
+        io.emit('twitch-bot-status', true);
 
         if (!twitchBot.client) {
-            const authProvider = new StaticAuthProvider(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
-            let client = new ApiClient({authProvider});
-            // let client = ApiClient.withCredentials(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
-            // TwitchClient.withCredentials(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions'])
-            //    .then((client) => {
-            twitchBot.client = client;
+            // Save an API client instance for later use
+            twitchBot.client = (apiClient) ? apiClient : new ApiClient({authProvider});
+
+            // Also connect to chat
             connectToChat(authProvider);
             fetchTwitchFollower();
         }
-        // await createTwitchClient();
     };
 
-    const connectBroadcaster = () => {
+    // Connect the broadcaster by saving an instance of the API client
+    // and connecting to chat.
+    // NOTE: apiClient is optional.
+    const connectBroadcaster = (authProvider, apiClient) => {
         twitchBroadcaster.authenticated = true;
+        io.emit('twitch-broadcaster-status', true);
 
         if (!twitchBroadcaster.client) {
-            const authProvider = new StaticAuthProvider(twitchKeys.clientId, store.get(ownerAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
-            let client = new ApiClient({authProvider});
-            // let client = ApiClient.withCredentials(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
-            //TwitchClient.withCredentials(twitchKeys.clientId, store.get(ownerAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions'])
-            //    .then((client) => {
-            twitchBroadcaster.client = client;
+            // Save an API client instance for later use
+            twitchBroadcaster.client = (apiClient) ? apiClient : new ApiClient({authProvider});
+
+            // Also connect to chat
             connectHostOnlyChat(authProvider);
             fetchTwitchSubs();
         }
     };
 
-    // Check if the access token is valid start startup. Initialize app if so.
+    // Check if the access token is valid on startup. Initialize app if so.
     if (store.get(botAccessToken)) {
-        const authProvider = new StaticAuthProvider(twitchKeys.clientId, store.get(botAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
-        let client = new ApiClient({authProvider});
-        client.getTokenInfo(store.get(botAccessToken), twitchKeys.clientId).then((results) => {
-            connectBot();
+        let authProvider = getAuthProvider(store.get(botAccessToken));
+        let botClient = new ApiClient({authProvider});
+        botClient.getTokenInfo(store.get(botAccessToken), twitchKeys.clientId).then((results) => {
+            console.log(`twitch-client.js | Bot access token valid. Expires: ${results.expiryDate}`);
+            connectBot(authProvider, botClient);
         }).catch((error) => {
-            console.error("Unable to use saved bot token: ${error}");
+            console.error(`[ERROR] twitch-client.js | Unable to use saved bot token: ${error}`);
         });
-        /*
-        TwitchClient.getTokenInfo(twitchKeys.clientId, store.get(botAccessToken)).then((results) => {
-            if (results._data.valid) {
-                connectBot();
-            }
-        });
-        */
     }
     if (store.get(ownerAccessToken)) {
-        //TwitchClient.getTokenInfo(twitchKeys.clientId, store.get(ownerAccessToken)).then((results) => {
-        //    if (results._data.valid) {
-        const authProvider = new StaticAuthProvider(twitchKeys.clientId, store.get(ownerAccessToken), ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions']);
-        let client = new ApiClient({authProvider});
-        client.getTokenInfo(store.get(ownerAccessToken), twitchKeys.clientId).then((results) => {
-            connectBroadcaster();
+        let authProvider = getAuthProvider(store.get(ownerAccessToken));
+        let ownerClient = new ApiClient({authProvider});
+        ownerClient.getTokenInfo(store.get(ownerAccessToken), twitchKeys.clientId).then((results) => {
+            console.log(`twitch-client.js | Owner access token valid. Expires: ${results.expiryDate}`);
+            connectBroadcaster(authProvider, ownerClient);
         }).catch((error) => {
-            console.error("Unable to use saved broadcaster token: ${error}");
+            console.error(`[ERROR] twitch-client.js | Unable to use saved broadcaster token: ${error}`);
         });
-    }
-
-    // Async function to create twitchClient instance.
-    /*
-    const createTwitchClient = async () => {
-        if(!twitchBot.client) {
-            twitchBot.client = await TwitchClient.withCredentials(twitchKeys.clientId, store.get(botAccessToken), ['chat:read','chat:edit', 'channel:moderate']);
-        }
-    }
-    */
-
-    const connectHostOnlyChat = async (authProvider) => {
-        if (!twitchBroadcaster.chatClient && twitchBroadcaster.authenticated && twitchBroadcaster.client) {
-            let chatClient;
-            if (authProvider) {
-                chatClient = new ChatClient(authProvider);
-            } else {
-                chatClient = await ChatClient.forTwitchClient(twitchBroadcaster.client);
-            }
-            await chatClient.connect();
-            //await chatClient.waitForRegistration();
-            chatClient.onRegister(async () => {
-                await chatClient.join('andrewcooks');
-                twitchBroadcaster.chatClient = chatClient;
-        
-                chatClient.onHosted((channel, byChannel, auto, viewers) => {
-                    // NOTE: you MUST be logged in as the channel owner in order to reveive this event (ugh)
-                    let eventInfo = {
-                        channel: channel, 
-                        byChannel: byChannel, 
-                        auto: auto, 
-                        count: viewers
-                    };
-    
-                    io.emit(events.HOST, eventInfo);
-                    triggerCallback(events.HOST, eventInfo);
-                });        
-            });
-        }
     }
 
     // Connects to Twitch Chat and sets up listeners for chat events.
@@ -160,20 +124,30 @@ module.exports = function(io) {
         if(!twitchBot.chatClient && twitchBot.authenticated && twitchBot.client) {
             // Create chatClient connection based off our twitchClient connection.
             // Connect and join to the 'andrewcooks' chatroom.
-            // {logLevel: 'debug'}
             let chatClient;
+
             if (authProvider) {
-                chatClient = new ChatClient(authProvider, {channels: ['andrewcooks']});
+                chatClient = new ChatClient({
+                    authProvider: authProvider,
+                    channels: ['andrewcooks']
+                });
             } else {
+                // This is the old deprecated method and probably won't work soon (if not already).
+                // It's here in case legacy code calls this without an authProvider.
                 chatClient = await ChatClient.forTwitchClient(twitchBot.client);
             }
 
+            await chatClient.connect()
+                .catch((err) => {
+                    console.error(`[ERROR] twitch-client.js | Unable to connect bot to chat: ${err}`);
+                });
+
             chatClient.onRegister(async () => {
                 await chatClient.join('andrewcooks');
-                console.log("twitch-client.js | Twitch Chat Connected.");
+                console.log("twitch-client.js | Twitch Bot connected to chat.");
                 twitchBot.chatClient = chatClient;
     
-                // Even listeners. Emmit Socket.IO events with all chat objects.
+                // Event listeners. Emmit Socket.IO events with all chat objects.
                 chatClient.onBitsBadgeUpgrade((channel, user, upgradeInfo, msg) => {
                     // Fires when a user upgrades their bits badge in a channel.
                     io.emit('twitch-onBitsBadgeUpgrade', Object.assign({}, channel, user, upgradeInfo, msg));
@@ -232,11 +206,52 @@ module.exports = function(io) {
                     triggerCallback(events.CHAT, eventInfo);
                 });    
             });
+        }
+    }
 
-            await chatClient.connect().catch((err) => {
-                console.log(err);
+    // Connects to Twitch Chat and sets up listeners for chat events.
+    // This one is specifically for the broadcaster, since it's the only way to get Host events.
+    const connectHostOnlyChat = async (authProvider) => {
+        // Only perform if chat isn't already connected and Twitch credentials are valid.
+        if (!twitchBroadcaster.chatClient && twitchBroadcaster.authenticated && twitchBroadcaster.client) {
+            // Create chatClient connection based off our twitchClient connection.
+            // Connect and join to the 'andrewcooks' chatroom.
+            let chatClient;
+
+            if (authProvider) {
+                chatClient = new ChatClient({
+                    authProvider: authProvider,
+                    channels: ['andrewcooks']
+                });
+            } else {
+                // This is the old deprecated method and probably won't work soon (if not already).
+                // It's here in case legacy code calls this without an authProvider.
+                chatClient = await ChatClient.forTwitchClient(twitchBroadcaster.client);
+            }
+
+            await chatClient.connect()
+                .catch((err) => {
+                    console.error(`[ERROR] twitch-client.js | Unable to connect broadcaster to chat: ${err}`);
+                });
+
+            chatClient.onRegister(async () => {
+                console.log("twitch-client.js | Twitch Broadcaster connected to chat.");
+                await chatClient.join('andrewcooks');
+                twitchBroadcaster.chatClient = chatClient;
+        
+                chatClient.onHosted((channel, byChannel, auto, viewers) => {
+                    // NOTE: you MUST be logged in as the channel owner in order to reveive this event (ugh)
+                    let eventInfo = {
+                        channel: channel, 
+                        byChannel: byChannel, 
+                        auto: auto, 
+                        count: viewers
+                    };
+    
+                    io.emit(events.HOST, eventInfo);
+                    triggerCallback(events.HOST, eventInfo);
+                });        
             });
-            //await chatClient.waitForRegistration();
         }
     }
 
@@ -274,6 +289,8 @@ module.exports = function(io) {
         });
     }
 
+    // Get a list of all subscriber usernames.
+    // This probably won't scale if the channel gets popular, but let's worry about that if we get there. :p
     const fetchTwitchSubs = () => {
         const subResult = twitchBroadcaster.client.helix.subscriptions.getSubscriptionsPaginated('249278489');
         subResult.getAll().then(result => {
@@ -283,9 +300,10 @@ module.exports = function(io) {
         });
     }
 
+    // Send a message to chat using the bot.
     const sendBotChat = (msg) => {
         if (twitchBot.chatClient) {
-            twitchBot.chatClient.say('andrewcooks', msg);
+            twitchBot.chatClient.say('andrewcooks', msg).catch((err) => console.log(err));
         }
     }
 
@@ -346,16 +364,23 @@ module.exports = function(io) {
         // ON init: Send state data to clients.
         socket.on('init', () => {
             console.log('twitch-client.js | init');
-            socket.emit('twitch-status', twitchBot.authenticated);
+            socket.emit('twitch-bot-status', twitchBot.authenticated);
+            socket.emit('twitch-broadcaster-status', twitchBroadcaster.authenticated);
         });
 
-        // ON twitter-fetch: Send state data to clients.
-        socket.on('twitch-fetch', (fn) => {
+        // ON twitter-bot-fetch: Send state data to clients.
+        socket.on('twitch-bot-fetch', (fn) => {
             fn(twitchBot.authenticated);
         });
 
+        // ON twitter-broadcaster-fetch: Send state data to clients.
+        socket.on('twitch-broadcaster-fetch', (fn) => {
+            fn(twitchBroadcaster.authenticated);
+        });
+        
         // ON twitch-connect-bot: Initiate Twitch OAuth login sequence.
         socket.on('twitch-connect-bot', () => {
+            console.log('twitch-client.js | twitch-connect-bot');
             const provider = getProvider();
             let window = getWindow();
         
@@ -368,11 +393,12 @@ module.exports = function(io) {
                 console.log("twitch-client.js | twitch-connect-bot | Twitch OAuth: Access Token: " + token);
                 store.delete(botAccessToken);
                 store.set(botAccessToken, token); // Save token to storage
-                connectBot();
+                let authProvider = getAuthProvider(token);
+                connectBot(authProvider);
             })
             .catch((error) => {
-                io.emit('twitch-status', false);
-                console.error(error);
+                io.emit('twitch-bot-status', false);
+                console.error(`[ERROR] twitch-client.js | Bot Auth error: ${error}`);
             });
         });
 
@@ -389,10 +415,12 @@ module.exports = function(io) {
                 console.log("twitch-client.js | twitch-connect-owner | Twitch OAuth: Owner Token: " + token);
                 store.delete(ownerAccessToken);
                 store.set(ownerAccessToken, token); // Save token to storage
-                connectBroadcaster();
+                let authProvider = getAuthProvider(token);
+                connectBroadcaster(authProvider);
             })
             .catch((error) => {
-                console.error(error);
+                io.emit('twitch-broadcaster-status', false);
+                console.error(`[ERROR] twitch-client.js | Broadcaster Auth error: ${error}`);
             });
         });
     });
