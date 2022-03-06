@@ -44,6 +44,7 @@ require('./plugins/notice.js')(io, clientSocket); // Get user's attention??? TOD
 require('./plugins/obs.js')(io, clientSocket); // Handle OBS scene transitions.
 require('./plugins/trivia.js')(io, clientSocket); // Handle Twitch Trivia Bot
 require('./plugins/twitch.js')(io, clientSocket); // Handle Twitch integration.
+require('./plugins/foodPolls.js')(io, clientSocket); // Random food poll handler.
 
 // Actviate iTunes media plugin based on OS.
 if (process.platform === 'darwin') { require('./plugins/nowplaying-mac.js')(io); }

@@ -7,6 +7,9 @@ module.exports = function(io, clientSocket) {
     // This is so we can listen to other plugins that want to post to Twitch
     clientSocket.on('twitch-chatpost', (msg) => twitch.sendBotChatMsg(msg.message));
 
+    // This is so we can listen to other plugins that want to start a poll.
+    clientSocket.on('twitch-poll', (msg) => twitch.createPoll(msg.question, msg.choices, msg.duration));
+
     // Connect twitch events that we care about.
     twitch.on(twitch.events.HOST, (msg) => {
         console.log(`twitch.js | HOST! ${msg.byChannel} hosted with ${msg.count} viewers`);
@@ -51,6 +54,12 @@ module.exports = function(io, clientSocket) {
         }
     });
 
+    twitch.on(twitch.events.REDEEM, (msg) => {
+        if (msg.id === 'f62e28f2-29bc-462a-97e9-76e7ab90919b' || msg.title === 'Random Food Poll') {
+            io.emit('foodpolls-start', {});
+        }
+    });
+
     twitch.on(twitch.events.CHAT, (msg) => {
         let lowerMessage = msg.message.toLowerCase(),
             maxConfetti = 50,
@@ -74,6 +83,7 @@ module.exports = function(io, clientSocket) {
                     props = {amount: (amt && amt > 0 && amt <= maxConfetti) ? amt : 10};
                 }
                 io.emit('confetti-single', props);
+                twitch.createPoll();
                 return;
             }
 

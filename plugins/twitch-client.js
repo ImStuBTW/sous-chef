@@ -2,6 +2,7 @@
 const {ApiClient} = require('@twurple/api');
 const {StaticAuthProvider} = require('@twurple/auth');
 const {ChatClient} = require('@twurple/chat');
+const {PubSubClient, PubSubSubscriptionMessage} = require('@twurple/pubsub');
 const twitchKeys = require('../.twitch-key');
 
 // Require Electron BrowserWindow.
@@ -29,18 +30,23 @@ module.exports = function(io) {
         RESUB: 'twitch-resub',
         SUBGIFT: 'twitch-subgift',
         SUBRANDOM: 'twitch-subrandom',
-        CHAT: 'twitch-chat'
+        CHAT: 'twitch-chat',
+        REDEEM: 'twitch-redemption'
     };
 
     const   botAccessToken = "botAccessToken",
             ownerAccessToken = "ownerAccessToken";
+
+    const permissions = ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions', 
+        'channel:read:redemptions', 'channel:manage:polls'];
 
     // Define Twitch client object and connection states.
     // twitchClient initialized in createTwitchClient.
     let latestFollower = '',
         callbacks = {},
         followers = [],
-        subs = [];
+        subs = [],
+        channelUser;
 
     let twitchBot = {
         client: null,
@@ -55,8 +61,6 @@ module.exports = function(io) {
     };
 
     const getAuthProvider = (accessToken) => {
-        let permissions = ['chat:read', 'chat:edit', 'channel:moderate', 'channel:read:subscriptions'];
-
         // Create authProvider containing access token & requested permissions
         const authProvider = new StaticAuthProvider(twitchKeys.clientId, accessToken, permissions);
         return authProvider;
@@ -72,6 +76,13 @@ module.exports = function(io) {
         if (!twitchBot.client) {
             // Save an API client instance for later use
             twitchBot.client = (apiClient) ? apiClient : new ApiClient({authProvider});
+
+            twitchBot.client.users.getUserByName('andrewcooks')
+                .then((user) => {
+                    if (user) {
+                        channelUser = user;
+                    }        
+                });
 
             // Also connect to chat
             connectToChat(authProvider);
@@ -92,6 +103,7 @@ module.exports = function(io) {
 
             // Also connect to chat
             connectHostOnlyChat(authProvider);
+            connectToPubSub(authProvider);
             fetchTwitchSubs();
         }
     };
@@ -116,6 +128,43 @@ module.exports = function(io) {
         }).catch((error) => {
             console.error(`[ERROR] twitch-client.js | Unable to use saved broadcaster token: ${error}`);
         });
+    }
+
+    const connectToPubSub = (authProvider) => {
+        const pubSubClient = new PubSubClient();
+        pubSubClient.registerUserListener(authProvider)
+            .then(async (userId) => {
+                console.log("twitch-client.js | Successfully connected to pubsub.");
+                await pubSubClient.onRedemption(userId, (message) => {
+                    /*
+                    channelId
+                    defaultImage
+                    id
+                    message
+                    redemptionDate
+                    rewardCost
+                    rewardId
+                    rewardImage
+                    rewardIsQueued
+                    rewardPrompt
+                    rewardTitle
+                    status
+                    userDisplayName
+                    userId
+                    userName
+                    */
+                    console.log(`twitch-client.js | ${message.rewardTitle} (${message.rewardId}) just redeemed by ${message.userName}!`);
+                    let eventInfo = {
+                        id: message.rewardId,
+                        title: message.rewardTitle,
+                        userId: message.userId,
+                        userName: message.userName,
+                        userDisplayName: message.userDisplayName
+                    };
+                    io.emit(events.REDEEM, eventInfo);
+                    triggerCallback(events.REDEEM, eventInfo);
+                });        
+            })
     }
 
     // Connects to Twitch Chat and sets up listeners for chat events.
@@ -307,6 +356,18 @@ module.exports = function(io) {
         }
     }
 
+    const createPoll = (question, choices, duration) => {
+        if (twitchBroadcaster.client) {
+            twitchBroadcaster.client.polls.createPoll(channelUser, {
+                title: question,
+                choices: choices,
+                duration: duration,
+                channelPointsPerVote: 10
+            });
+            sendBotChat("A new poll has started! Vote using your Twitch app or /vote in chat.");
+        }
+    }
+
     // Loop Twitch follower check every 10 seconds..
     setInterval(() => {
         if(twitchBot.authenticated) {
@@ -323,7 +384,7 @@ module.exports = function(io) {
                 response_type: "token",
                 client_id: twitchKeys.clientId, // Client ID from .gitignored config file. See header.
                 redirect_uri: "http://localhost/", 
-                scope: 'chat:read chat:edit channel:moderate channel:read:subscriptions', // Last comma isn't a typo.
+                scope: permissions.join(' ')
             });
 
             provider.on("before-authorize-request", parameter => {
@@ -457,6 +518,7 @@ module.exports = function(io) {
         isFollower: isFollower,
         isSub: isSub,
         on: addCallback,
-        off: removeCallback
+        off: removeCallback,
+        createPoll: createPoll
     };
 };
