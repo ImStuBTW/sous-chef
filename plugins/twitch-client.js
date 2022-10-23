@@ -446,34 +446,12 @@ module.exports = function(io, shell, frontendPort) {
             console.log('twitch-client.js | twitch-connect-bot');
             
             // Open the login window in the system's default browser.
-            shell.openExternal('https://id.twitch.tv/oauth2/authorize'
-            + '?response_type=' + 'token'
-            + '&client_id=' + twitchKeys.clientId
-            + '&redirect_uri=' + 'http://localhost:' + frontendPort + '/botcallback'
-            + '&scope=' + permissions.join(' ')
+            shell.openExternal('https://id.twitch.tv/oauth2/authorize?response_type=token&force_verify=true'
+                + `&client_id=${twitchKeys.clientId}&redirect_uri=http://localhost:${frontendPort}/botcallback`
+                + '&scope=' + permissions.join(' ')
             );
 
             // The rest of this function has been moved into a callback listener since Chrome needs to manage the login.
-
-            /*const provider = getProvider();
-            let window = getWindow();
-        
-            // When the OAuth provider has done its job, it closes the window and parases the access token.
-            // Access token gets stored in Electron main thread.
-            provider.perform(window).then(async (resp) => {
-                window.close()
-                console.log(resp);
-                const token = qs.parse(resp).access_token; // query-string package reads ?=access_token from returned URL
-                console.log("twitch-client.js | twitch-connect-bot | Twitch OAuth: Access Token: " + token);
-                store.delete(botAccessToken);
-                store.set(botAccessToken, token); // Save token to storage
-                let authProvider = getAuthProvider(token);
-                connectBot(authProvider);
-            })
-            .catch((error) => {
-                io.emit('twitch-bot-status', false);
-                console.error(`[ERROR] twitch-client.js | Bot Auth error: ${error}`);
-            });*/
         });
 
         // If a user opens https://localhost:port/botcallback/#access_token=etc, log them in.
@@ -490,35 +468,12 @@ module.exports = function(io, shell, frontendPort) {
             console.log('twitch-client.js | twitch-connect-owner');
 
             // Open the login window in the system's default browser.
-            shell.openExternal('https://id.twitch.tv/oauth2/authorize'
-                + '?response_type=' + 'token'
-                + '&client_id=' + twitchKeys.clientId
-                + '&redirect_uri=' + 'http://localhost:' + frontendPort + '/ownercallback'
+            shell.openExternal('https://id.twitch.tv/oauth2/authorize?response_type=token&force_verify=true'
+                + `&client_id=${twitchKeys.clientId}&redirect_uri=http://localhost:${frontendPort}/ownercallback`
                 + '&scope=' + permissions.join(' ')
-                );
+            );
 
             // The rest of this function has been moved into a callback listener since Chrome needs to manage the login.
-
-            /*
-            const provider = getProvider();
-            let window = getWindow();
-        
-            // When the OAuth provider has done its job, it closes the window and parases the access token.
-            // Access token gets stored in Electron main thread.
-            provider.perform(window).then(async (resp) => {
-                window.close();
-                const token = qs.parse(resp).access_token; // query-string package reads ?=access_token from returned URL
-                console.log("twitch-client.js | twitch-connect-owner | Twitch OAuth: Owner Token: " + token);
-                store.delete(ownerAccessToken);
-                store.set(ownerAccessToken, token); // Save token to storage
-                let authProvider = getAuthProvider(token);
-                connectBroadcaster(authProvider);
-            })
-            .catch((error) => {
-                io.emit('twitch-broadcaster-status', false);
-                console.error(`[ERROR] twitch-client.js | Broadcaster Auth error: ${error}`);
-            });
-            */
         });
 
         // If a user opens https://localhost:port/ownercallback/#access_token=etc, log them in.
