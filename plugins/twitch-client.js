@@ -15,7 +15,7 @@ const qs = require('qs');
 // Require Electron-Store to store Twitch access token.
 const Store = require('electron-store');
 
-module.exports = function(io) {
+module.exports = function(io, shell, frontendPort) {
     const store = new Store();
     // Presistent variables:
     // store.get(botAccessToken);
@@ -377,7 +377,9 @@ module.exports = function(io) {
 
     // Socket connections.
     io.on('connection', (socket) => {
-        const getProvider = () => {
+        // Whoo, look at all that provide and Electron window code we need now that Twitch only wants to talk to Chrome.
+
+        /*const getProvider = () => {
             // Define OAuth provider 
             const provider = new OAuth2Provider({
                 authorize_url: "https://id.twitch.tv/oauth2/authorize",
@@ -420,7 +422,7 @@ module.exports = function(io) {
             });
 
             return window;
-        };
+        };*/
 
         // ON init: Send state data to clients.
         socket.on('init', () => {
@@ -442,7 +444,18 @@ module.exports = function(io) {
         // ON twitch-connect-bot: Initiate Twitch OAuth login sequence.
         socket.on('twitch-connect-bot', () => {
             console.log('twitch-client.js | twitch-connect-bot');
-            const provider = getProvider();
+            
+            // Open the login window in the system's default browser.
+            shell.openExternal('https://id.twitch.tv/oauth2/authorize'
+            + '?response_type=' + 'token'
+            + '&client_id=' + twitchKeys.clientId
+            + '&redirect_uri=' + 'http://localhost:' + frontendPort + '/botcallback'
+            + '&scope=' + permissions.join(' ')
+            );
+
+            // The rest of this function has been moved into a callback listener since Chrome needs to manage the login.
+
+            /*const provider = getProvider();
             let window = getWindow();
         
             // When the OAuth provider has done its job, it closes the window and parases the access token.
@@ -460,11 +473,33 @@ module.exports = function(io) {
             .catch((error) => {
                 io.emit('twitch-bot-status', false);
                 console.error(`[ERROR] twitch-client.js | Bot Auth error: ${error}`);
-            });
+            });*/
+        });
+
+        // If a user opens https://localhost:port/botcallback/#access_token=etc, log them in.
+        // This listener takes over the previous login logic flow.
+        socket.on('twitch-connect-bot-callback', (token) => {
+            console.log("twitch-client.js | twitch-connect-bot-callback | Access Token: " + token);
+            store.delete(botAccessToken);
+            store.set(botAccessToken, token); // Save token to storage
+            let authProvider = getAuthProvider(token);
+            connectBot(authProvider);
         });
 
         socket.on('twitch-connect-owner', () => {
             console.log('twitch-client.js | twitch-connect-owner');
+
+            // Open the login window in the system's default browser.
+            shell.openExternal('https://id.twitch.tv/oauth2/authorize'
+                + '?response_type=' + 'token'
+                + '&client_id=' + twitchKeys.clientId
+                + '&redirect_uri=' + 'http://localhost:' + frontendPort + '/ownercallback'
+                + '&scope=' + permissions.join(' ')
+                );
+
+            // The rest of this function has been moved into a callback listener since Chrome needs to manage the login.
+
+            /*
             const provider = getProvider();
             let window = getWindow();
         
@@ -483,6 +518,17 @@ module.exports = function(io) {
                 io.emit('twitch-broadcaster-status', false);
                 console.error(`[ERROR] twitch-client.js | Broadcaster Auth error: ${error}`);
             });
+            */
+        });
+
+        // If a user opens https://localhost:port/ownercallback/#access_token=etc, log them in.
+        // This listener takes over the previous login logic flow.
+        socket.on('twitch-connect-owner-callback', (token) => {
+            console.log("twitch-client.js | twitch-connect-owner-callback | Access Token: " + token);
+            store.delete(ownerAccessToken);
+            store.set(ownerAccessToken, token); // Save token to storage
+            let authProvider = getAuthProvider(token);
+            connectBroadcaster(authProvider);
         });
     });
 

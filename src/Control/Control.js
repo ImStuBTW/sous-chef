@@ -1,5 +1,6 @@
 // Import React packages.
 import { Component } from 'react';
+import qs from 'qs';
 
 // Import other node packages.
 import io from 'socket.io-client';
@@ -23,6 +24,30 @@ let socket = io(`http://${window.location.hostname}:3001/`);
 // Tabs splits page into 3 main tabs.
 // Each tab is a component.
 class Control extends Component {
+componentDidMount() {
+  if(window.location.pathname) {
+    if(window.location.hash) {
+      const params = qs.parse(window.location.hash.substring(1));
+      if(params) {
+        if(params.access_token) {
+          if(window.location.pathname === '/botcallback') {
+            socket.emit('twitch-connect-bot-callback', params.access_token, (msg) => {
+              console.log(`Twitch.js | twitch-connect-bot-callback | Twitich Bot Auth Token : ${params.access_token}`);
+              this.setState({ botStatus: true });
+            });
+          }
+          if(window.location.pathname === '/ownercallback') {
+            socket.emit('twitch-connect-owner-callback', params.access_token, (msg) => {
+              console.log(`Twitch.js | twitch-connect-owner-callback | Twitich Bot Auth Token : ${params.access_token}`);
+              this.setState({ botStatus: true });
+            });
+          }
+        }
+      }
+    }
+  }
+}
+
   render() {
     return (
       <Tabs fill defaultActiveKey="cook" id="control-tabs" className="control-tabs">
@@ -37,7 +62,7 @@ class Control extends Component {
         </Tab>
       </Tabs>
     );
-  }
+  };
 }
 
 export default Control;

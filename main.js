@@ -43,7 +43,7 @@ require('./plugins/confetti.js')(io, clientSocket); // Show confetti overlay.
 require('./plugins/notice.js')(io, clientSocket); // Get user's attention??? TODO: Verify Functionality
 require('./plugins/obs.js')(io, clientSocket); // Handle OBS scene transitions.
 require('./plugins/trivia.js')(io, clientSocket); // Handle Twitch Trivia Bot
-require('./plugins/twitch.js')(io, clientSocket); // Handle Twitch integration.
+require('./plugins/twitch.js')(io, clientSocket, shell, frontendPort); // Handle Twitch integration. Needs shell and frontendPort to open Chrome window.
 require('./plugins/foodPolls.js')(io, clientSocket); // Random food poll handler.
 
 // Actviate iTunes media plugin based on OS.
@@ -157,9 +157,7 @@ app.on("activate", () => {
 // Serve frontend pages unless in dev mode.
 if(!isDev) {
   frontendApp.use(express.static(path.join(__dirname, 'build')));
-  frontendApp.get('*', (req,res) =>{
-    res.sendFile(path.join(__dirname, 'build/index.html'));
-  });
+  frontendApp.get('*', (req,res) =>{res.sendFile(path.join(__dirname, 'build/index.html'));});
   frontendApp.listen(frontendPort);
   console.log('Frontend serving on http://localhost:' + frontendPort);
   console.log('Frontend serving on http://' + bonjourUrl + ':' + frontendPort);

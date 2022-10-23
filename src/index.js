@@ -16,6 +16,12 @@ ReactDOM.render(
       <Route exact path ="/">
         <Control />
       </Route>
+      <Route exact path ="/botcallback">
+        <Control />
+      </Route>
+      <Route exact path ="/ownercallback">
+        <Control />
+      </Route>
       <Route path ="/overlay">
         <Overlay />
       </Route>

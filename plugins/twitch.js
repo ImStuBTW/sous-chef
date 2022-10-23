@@ -1,8 +1,8 @@
 const twitchClient = require('./twitch-client');
 const twitchUrl = 'https://twitch.tv/';
 
-module.exports = function(io, clientSocket) {
-    let twitch = twitchClient(io);
+module.exports = function(io, clientSocket, shell, frontendPort) {
+    let twitch = twitchClient(io, shell, frontendPort);
 
     // This is so we can listen to other plugins that want to post to Twitch
     clientSocket.on('twitch-chatpost', (msg) => twitch.sendBotChatMsg(msg.message));

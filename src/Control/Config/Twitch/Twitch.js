@@ -69,6 +69,7 @@ class Twitch extends Component {
   handleLoginConnect() {
     this.props.socket.emit('twitch-connect-owner', (msg) => {
       console.log(`Twitch.js | twitch-connect-owner | Twitch Broadcaster Auth Status: ${msg.status}`);
+      console.log(msg.status);
       this.setState({
         broadcasterStatus: msg.status
       });
